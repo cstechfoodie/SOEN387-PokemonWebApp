@@ -3,7 +3,7 @@ package data.rdg;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRDG extends RDG{
+public class UserRDG{
 
 	private static int counter = 1;
 	
@@ -27,39 +27,35 @@ public class UserRDG extends RDG{
 		this.password = password;
 	}
 
-	@Override
-	public int insert() {
+	public static int insert() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public int update() {
+	public static int update() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public int delete() {
+	public static int delete() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public UserRDG find(long id) {
+	public static UserRDG find(long id) {
 		// TODO Auto-generated method stub
-		return this;
+		return new UserRDG();
 	}
 	
-	public UserRDG find(String username) {
-		return this;
+	public static UserRDG find(String username) {
+		return new UserRDG();
 	}
 	
-	public UserRDG find(String username, String password) {
-		return this;
+	public static UserRDG find(String username, String password) {
+		return new UserRDG();
 	}
 	
-	public List<UserRDG> findAll(){
+	public static List<UserRDG> findAll(){
 		return new ArrayList<UserRDG>();
 	}
 

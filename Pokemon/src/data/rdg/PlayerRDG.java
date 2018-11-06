@@ -3,7 +3,7 @@ package data.rdg;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerRDG extends RDG{
+public class PlayerRDG{
 	
 	private int id;
 	
@@ -35,35 +35,31 @@ public class PlayerRDG extends RDG{
 
 	private String username;
 
-	@Override
-	public int insert() {
+	public static int insert() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public int update() {
+	public static int update() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public int delete() {
+	public static int delete() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public PlayerRDG find(long id) {
+	public static PlayerRDG find(long id) {
 		// TODO Auto-generated method stub
-		return this;
+		return new PlayerRDG();
 	}
 	
-	public PlayerRDG find(String username) {
-		return this;
+	public static PlayerRDG find(String username) {
+		return new PlayerRDG();
 	}
 	
-	public List<PlayerRDG> findAll(){
+	public static List<PlayerRDG> findAll(){
 		return new ArrayList<PlayerRDG>();
 	}
 
