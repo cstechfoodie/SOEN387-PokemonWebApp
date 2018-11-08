@@ -57,15 +57,19 @@ public class LoginPC extends HttpServlet {
 		}
 		if (u == null) {
 			req.setAttribute("message", "I do not recognize that username and password combination.");
-			//req.forward("failure.jsp");
+			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
 		} else {
 			long id = u.getId();
 			req.getSession(true).setAttribute("userid", id);
-			req.setAttribute("message", "User '" + u.getUsername() + "' has been successfully logged in.");
-			//req.forward("success.jsp");
+			req.setAttribute("message", "User " + u.getUsername() + " has been successfully logged in.");
+			req.setAttribute("status", "success");
 			req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
 		}
+	}
+	
+	public void init() throws ServletException{
+		System.out.println("adasda");
 	}
 
 }
