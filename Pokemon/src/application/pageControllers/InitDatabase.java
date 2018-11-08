@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import data.connection.DbConnectionManager;
+import data.rdg.CardRDG;
 
 /**
  * Servlet implementation class InitDatabase
@@ -48,11 +49,36 @@ public class InitDatabase extends HttpServlet {
 		try {
 			
 			con.createStatement().executeUpdate("CREATE TABLE USER (id int, version int, username varchar(255), password varchar(255), PRIMARY KEY (id));");
+			con.createStatement().executeUpdate("CREATE TABLE Card (\n" + 
+					"  `id` INT NOT NULL,\n" + 
+					"  `type` VARCHAR(1) NOT NULL,\n" + 
+					"  `name` VARCHAR(255) NOT NULL,\n" + 
+					"  PRIMARY KEY (`id`));");
+			prepareCardTable();
+			con.createStatement().executeUpdate("CREATE TABLE Deck (\n" + 
+					"  `id` INT NOT NULL,\n" + 
+					"  `cardId` INT NOT NULL,\n" + 
+					"  `playerId` INT NOT NULL,\n" + 
+					"  PRIMARY KEY (`id`, `playerId`));");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("Database Tables Have Been Initialized.");
+	}
+	
+	private void prepareCardTable() {
+		CardRDG e = new CardRDG("e", "Fire");
+		CardRDG p = new CardRDG("p", "Charizard");
+		CardRDG t = new CardRDG("t", "Misty");
+		try {
+			e.insert();
+			p.insert();
+			t.insert();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 
 }

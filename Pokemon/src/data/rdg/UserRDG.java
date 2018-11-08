@@ -27,7 +27,7 @@ public class UserRDG {
 
 	public UserRDG(String username, String password) {
 		try {
-			this.id = SingleAppUniqueIdFactory.getMaxId("USER");
+			this.id = SingleAppUniqueIdFactory.getMaxId("USER", "id");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
