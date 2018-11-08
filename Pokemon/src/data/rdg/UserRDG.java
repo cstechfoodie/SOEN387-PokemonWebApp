@@ -75,7 +75,7 @@ public class UserRDG {
 	}
 
 	public static UserRDG find(long id) throws SQLException {
-		String sql = "SELECT id, username, username, version FROM User WHERE id = '" + id +"';";
+		String sql = "SELECT * FROM User WHERE id = '" + id +"';";
 		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
 		UserRDG user = new UserRDG();
 		while (res.next()) {

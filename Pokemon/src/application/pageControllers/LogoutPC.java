@@ -32,8 +32,7 @@ public class LogoutPC extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		processRequest(request, response);
 	}
 
 	/**
@@ -42,8 +41,7 @@ public class LogoutPC extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		processRequest(request, response);
 	}
 
 	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -52,12 +50,11 @@ public class LogoutPC extends HttpServlet {
 		try {
 			u = UserRDG.find(id);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		req.getSession(true).invalidate();
-		if(id == u.getId()) {
-			req.setAttribute("message", "User '" + u.getUsername() + "' has been successfully logged out.");
+		if(u != null && id == u.getId()) {
+			req.setAttribute("message", "User " + u.getUsername() + " has been successfully logged out.");
 			req.setAttribute("status", "success");
 			req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
 		} else {

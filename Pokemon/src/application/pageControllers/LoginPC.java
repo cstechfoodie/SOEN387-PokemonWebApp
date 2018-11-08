@@ -67,9 +67,4 @@ public class LoginPC extends HttpServlet {
 			req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
 		}
 	}
-	
-	public void init() throws ServletException{
-		System.out.println("adasda");
-	}
-
 }
