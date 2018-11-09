@@ -45,7 +45,14 @@ public class LogoutPC extends HttpServlet {
 	}
 
 	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		long id = (Long) req.getSession(true).getAttribute("userid");
+		int id = -1;
+		try {
+			id = (int) req.getSession(true).getAttribute("userid");
+		} catch (Exception e) {
+			req.setAttribute("message", "You have not successfully logged in.");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+		}
 		UserRDG u = null;
 		try {
 			u = UserRDG.find(id);
@@ -53,15 +60,11 @@ public class LogoutPC extends HttpServlet {
 			e.printStackTrace();
 		}
 		req.getSession(true).invalidate();
-		if(u != null && id == u.getId()) {
+		if(id > 0 && u != null && id == u.getId()) {
 			req.setAttribute("message", "User " + u.getUsername() + " has been successfully logged out.");
 			req.setAttribute("status", "success");
 			req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
-		} else {
-			req.setAttribute("message", "You have not successfully logged in.");
-			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
-		}
+		} 
 	}
 
 }

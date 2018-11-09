@@ -1,5 +1,6 @@
 package data.rdg;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,9 +11,12 @@ import java.util.List;
 import data.connection.DbConnectionManager;
 import domain.service.SingleAppUniqueIdFactory;
 
-public class UserRDG {
+public class UserRDG implements Serializable {
 
-	private static int counter = 1;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private int id;
 
@@ -51,7 +55,7 @@ public class UserRDG {
 	}
 
 	public int update() throws SQLException {
-		String sql = "UPDATE User" + 
+		String sql = "UPDATE USER" + 
 				"SET version = ?, username = ?, password = ?" + 
 				"WHERE id = ?;";
 		Connection con = DbConnectionManager.getConnection();
@@ -66,7 +70,7 @@ public class UserRDG {
 	}
 
 	public int delete() throws SQLException {
-		String sql = "DELETE FROM User WHERE id = '" + this.id + "';";
+		String sql = "DELETE FROM USER WHERE id = '" + this.id + "';";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		int res = ps.executeUpdate();
@@ -74,11 +78,12 @@ public class UserRDG {
 		return res;
 	}
 
-	public static UserRDG find(long id) throws SQLException {
-		String sql = "SELECT * FROM User WHERE id = '" + id +"';";
+	public static UserRDG find(int id) throws SQLException {
+		String sql = "SELECT * FROM USER WHERE id = '" + id +"';";
 		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
-		UserRDG user = new UserRDG();
+		UserRDG user = null; 
 		while (res.next()) {
+			user = new UserRDG();
 			user.setId(res.getInt("id"));
 			user.setUsername(res.getString("username"));
 			user.setPassword(res.getString("password"));
@@ -89,7 +94,7 @@ public class UserRDG {
 	}
 
 	public static UserRDG find(String username) throws SQLException {
-		String sql = "SELECT * FROM User WHERE username = '" + username + "';";
+		String sql = "SELECT * FROM USER WHERE username = '" + username + "';";
 		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
 		UserRDG user = null;
 		while (res.next()) {
@@ -104,7 +109,7 @@ public class UserRDG {
 	}
 
 	public static UserRDG find(String username, String password) throws SQLException {
-		String sql = "SELECT * FROM User WHERE username = '" + username + "' AND password = '" + password +"';";
+		String sql = "SELECT * FROM USER WHERE username = '" + username + "' AND password = '" + password +"';";
 		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
 		UserRDG user = null;
 		while (res.next()) {
@@ -118,9 +123,9 @@ public class UserRDG {
 		return user;
 	}
 
-	public static List<UserRDG> findAll() throws SQLException {
+	public static ArrayList<UserRDG> findAll() throws SQLException {
 		ArrayList<UserRDG> list = new ArrayList<>();
-		String sql = "SELECT id, username, username, version FROM User;";
+		String sql = "SELECT * FROM USER;";
 		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
 		UserRDG user = null;
 		while (res.next()) {

@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.connection.DbConnectionManager;
-import domain.service.SingleAppUniqueIdFactory;
 
-public class CardRDG {
+public class HandCardRDG {
+	private int id;
+	
 	private int deckId;
+	
 	private int sequenceId;
+	
 	private int cardtypeId;
-
+	
 	public int getDeckId() {
 		return deckId;
 	}
@@ -45,9 +48,19 @@ public class CardRDG {
 		this.cardtypeId = cardtypeId;
 	}
 	
-	public CardRDG() {};
+	public int getId() {
+		return id;
+	}
+	
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public HandCardRDG() {};
 
-	public CardRDG(int deckId, int sequenceId, int cardtypeId) {
+	public HandCardRDG(int id, int deckId, int sequenceId, int cardtypeId) {
+		this.id = id;
 		this.deckId = deckId;
 		this.sequenceId = sequenceId;
 		this.cardtypeId = cardtypeId;
@@ -55,19 +68,22 @@ public class CardRDG {
 	
 	
 	public int insert() throws SQLException {
-		String sql = "INSERT INTO CARD (deckId, sequenceId, cardtypeId) VALUES (?, ?, ?);";
+		String sql = "INSERT INTO HANDCARD (id, deckId, sequenceId, cardtypeId) VALUES (?, ?, ?, ?);";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setInt(1, this.deckId);
-		ps.setInt(2, this.sequenceId);
-		ps.setInt(3, this.cardtypeId);
+		ps.setInt(1, this.id);
+		ps.setInt(2, this.deckId);
+		ps.setInt(3, this.sequenceId);
+		ps.setInt(4, this.cardtypeId);
 		int res = ps.executeUpdate();
 		ps.close();
 		return res;
 	}
 	
+
+
 	public int delete() throws SQLException {
-		String sql = "DELETE FROM CARD WHERE id = '" + this.deckId + "' AND sequenceId = '" + this.sequenceId + "';";
+		String sql = "DELETE FROM HANDCARD WHERE deckId = '" + this.deckId + "' AND sequenceId = '" + this.sequenceId + "';";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		int res = ps.executeUpdate();
@@ -75,28 +91,33 @@ public class CardRDG {
 		return res;
 	}
 	
-	//upload a new deck with a unique deckId and return the deckId to deck object
-	public static int uploadDeck() throws SQLException{
-		int deckId = SingleAppUniqueIdFactory.getMaxId("CARD", "deckId");		
-		CardRDG card = new CardRDG();
-		for(int i = 1; i <= 40; i++) {
-			card = new CardRDG();
-			card.setDeckId(deckId);
-			card.setSequenceId(i);
-			card.setCardtypeId((int) (Math.floor(Math.random()*3))+1);
-			card.insert();
-		}
-		return deckId;	
+	public int deleteAll() throws SQLException {
+		String sql = "DELETE FROM HANDCARD WHERE id = '" + this.id  + "';";
+		Connection con = DbConnectionManager.getConnection();
+		PreparedStatement ps = con.prepareStatement(sql);
+		int res = ps.executeUpdate();
+		ps.close();
+		return res;
+	}
+	
+	public static int handSize(int id) throws SQLException {
+		String sql = "SELECT COUNT(" + id + ") AS count FROM HANDCARD WHERE id = '" + id + "';";
+		ResultSet rs = DbConnectionManager.getConnection().createStatement()
+				.executeQuery(sql);
+		int count  = rs.next() ? rs.getInt("count") : 0;
+		rs.close();
+		return count;
 	}
 	
 	//return a list of cards associate with the deckId
-	public static List<CardRDG> viewDeck(int deckId) throws SQLException{
-		ArrayList<CardRDG> list = new ArrayList<>();
-		String sql = "SELECT * FROM CARD WHERE deckId = '" + deckId + "';";
+	public static List<HandCardRDG> viewHand(int id) throws SQLException{
+		ArrayList<HandCardRDG> list = new ArrayList<>();
+		String sql = "SELECT * FROM HANDCARD WHERE id = '" + id + "';";
 		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
-		CardRDG card = null;
+		HandCardRDG card = null;
 		while (res.next()) {
-			card = new CardRDG();
+			card = new HandCardRDG();
+			card.setId(res.getInt("id"));
 			card.setDeckId(res.getInt("deckId"));
 			card.setSequenceId(res.getInt("sequenceId"));
 			card.setCardtypeId(res.getInt("cardtypeId"));

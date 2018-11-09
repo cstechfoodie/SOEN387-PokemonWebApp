@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import data.connection.DbConnectionManager;
-import data.rdg.CardRDG;
+import data.rdg.CardTypeRDG;
 
 /**
  * Servlet implementation class InitDatabase
@@ -49,17 +49,24 @@ public class InitDatabase extends HttpServlet {
 		try {
 			
 			con.createStatement().executeUpdate("CREATE TABLE USER (id int, version int, username varchar(255), password varchar(255), PRIMARY KEY (id));");
-			con.createStatement().executeUpdate("CREATE TABLE Card (\n" + 
+			con.createStatement().executeUpdate("CREATE TABLE CARDTYPE (\n" + 
 					"  `id` INT NOT NULL,\n" + 
 					"  `type` VARCHAR(1) NOT NULL,\n" + 
 					"  `name` VARCHAR(255) NOT NULL,\n" + 
 					"  PRIMARY KEY (`id`));");
 			prepareCardTable();
-			con.createStatement().executeUpdate("CREATE TABLE Deck (\n" + 
+			con.createStatement().executeUpdate("CREATE TABLE CARD (\n" + 
+					"  `deckId` INT NOT NULL,\n" + 
+					"  `sequenceId` INT NOT NULL,\n" + 
+					"  `cardtypeId` INT NOT NULL,\n" + 
+					"  PRIMARY KEY (`deckId`, `sequenceId`));");
+			con.createStatement().executeUpdate("CREATE TABLE CHALLENGE (\n" + 
 					"  `id` INT NOT NULL,\n" + 
-					"  `cardId` INT NOT NULL,\n" + 
-					"  `playerId` INT NOT NULL,\n" + 
-					"  PRIMARY KEY (`id`, `playerId`));");
+					"  `version` INT NOT NULL,\n" + 
+					"  `challenger` INT NOT NULL,\n" + 
+					"  `challengee` INT NOT NULL,\n" + 
+					"  `status` INT NOT NULL,\n" + 
+					"  PRIMARY KEY (`id`));");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -68,9 +75,9 @@ public class InitDatabase extends HttpServlet {
 	}
 	
 	private void prepareCardTable() {
-		CardRDG e = new CardRDG("e", "Fire");
-		CardRDG p = new CardRDG("p", "Charizard");
-		CardRDG t = new CardRDG("t", "Misty");
+		CardTypeRDG e = new CardTypeRDG("e", "Fire");
+		CardTypeRDG p = new CardTypeRDG("p", "Charizard");
+		CardTypeRDG t = new CardTypeRDG("t", "Misty");
 		try {
 			e.insert();
 			p.insert();
