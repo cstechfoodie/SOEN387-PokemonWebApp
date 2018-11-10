@@ -1,14 +1,24 @@
 package domain.model;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-import data.rdg.CardRDG;
+import data.rdg.DeckCardRDG;
 
 public class Deck {
 	
 	private int id;
-	private List<CardRDG> cards;
+	private List<DeckCardRDG> cards;
+	
+	public Deck() {
+		cards = new ArrayList<DeckCardRDG>();
+	}
+	
+	public Deck(int id) {
+		this.id = id;
+		cards = new ArrayList<DeckCardRDG>();
+	}
 	
 	public int getId() {
 		return id;
@@ -18,31 +28,32 @@ public class Deck {
 		this.id = id;
 	}
 
-	public List<CardRDG> getCards() {
+	public List<DeckCardRDG> getCards() {
 		return cards;
 	}
 
-	public void setCards(List<CardRDG> cards) {
+	public void setCards(ArrayList<DeckCardRDG> cards) {
 		this.cards = cards;
 	}
 	
 	
 	//initialize a deck with 
-	public static Deck uploadDeck() {
-		Deck deck = new Deck();
-		try {
-			deck.setId(CardRDG.uploadDeck());
-		} catch (SQLException e) {
-			System.out.println("uploadDeck method error from Deck Class");
-			e.printStackTrace();
-		}
-		return deck;
+	public boolean uploadDeck() {
+		this.cards.forEach(i -> {
+			try {
+				i.insert();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		return true;
 	}
 	
-	public static List<CardRDG> viewDeck(int deckId) {
-		List<CardRDG> cards = null;
+	public static List<DeckCardRDG> viewDeck(int deckId) {
+		List<DeckCardRDG> cards = null;
 		try {
-			cards = CardRDG.viewDeck(deckId);
+			cards = DeckCardRDG.viewDeck(deckId);
 		} catch (SQLException e) {
 			System.out.println("viewDeck method error from Deck Class");
 			e.printStackTrace();
@@ -50,14 +61,14 @@ public class Deck {
 		return cards;
 	}
 	
-	public List<CardRDG> viewDeck() {
+	public ArrayList<DeckCardRDG> viewDeck() {
 		try {
-			this.cards = CardRDG.viewDeck(this.id);
+			this.cards = DeckCardRDG.viewDeck(this.id);
 		} catch (SQLException e) {
 			System.out.println("viewDeck method error from Deck Class");
 			e.printStackTrace();
 		}
-		return this.cards;
+		return (ArrayList<DeckCardRDG>) this.cards;
 	}
 	
 

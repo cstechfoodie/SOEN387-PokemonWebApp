@@ -73,7 +73,7 @@ public class RegisterPC extends HttpServlet {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				long id = u.getId();
+				int id = u.getId();
 				req.getSession(true).setAttribute("userid", id);
 				req.setAttribute("message", "User " + user + " has been successfully registered.");
 				req.setAttribute("status", "success");
