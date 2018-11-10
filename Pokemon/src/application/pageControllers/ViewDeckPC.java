@@ -3,6 +3,8 @@ package application.pageControllers;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,8 +41,8 @@ public class ViewDeckPC extends HttpServlet {
 
 	
 	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		int deckId = req.getSession(true).getAttribute("deckId") == null ? -1
-				: (int) req.getSession(true).getAttribute("deckId");
+		int deckId = req.getSession(true).getAttribute("userid") == null ? -1
+				: (int) req.getSession(true).getAttribute("userid");
 		if (deckId < 0) {
 			req.setAttribute("message", "You don't have a associate deck");
 			req.setAttribute("status", "fail");
@@ -58,9 +60,13 @@ public class ViewDeckPC extends HttpServlet {
 				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
 				return;
 			} else {
+				Deck d = new Deck();
+				d.setCards(cards);
+				req.setAttribute("deck", d);
 				req.setAttribute("cards", cards);
 				req.setAttribute("status", "success");
 				req.getRequestDispatcher("WEB-INF/jsp/viewDeck.jsp").forward(req, res);
+				//res.getWriter().append("Served at: ");
 				return;
 			}
 		}

@@ -25,6 +25,8 @@ public class UserRDG implements Serializable {
 	private String username;
 
 	private String password;
+	
+	private String status;
 
 	public UserRDG() {
 	}
@@ -42,13 +44,14 @@ public class UserRDG implements Serializable {
 	}
 
 	public int insert() throws SQLException {
-		String sql = "INSERT INTO USER (id, version, username, password) VALUES (?, ?, ?, ?);";
+		String sql = "INSERT INTO USER (id, version, username, password, status) VALUES (?, ?, ?, ?, ?);";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1, this.id);
 		ps.setInt(2, this.version);
 		ps.setString(3, this.username);
 		ps.setString(4, this.password);
+		ps.setString(5, this.status);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
@@ -57,14 +60,15 @@ public class UserRDG implements Serializable {
 
 	public int update() throws SQLException {
 		String sql = "UPDATE USER" + 
-				"SET version = ?, username = ?, password = ?" + 
+				"SET version = ?, username = ?, password = ?, status = ?" + 
 				"WHERE id = ?;";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setInt(4, this.id);
+		ps.setInt(5, this.id);
 		ps.setInt(1, this.version + 1);
 		ps.setString(2, this.username);
 		ps.setString(3, this.password);
+		ps.setString(4, this.status);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
@@ -92,6 +96,7 @@ public class UserRDG implements Serializable {
 			user.setUsername(res.getString("username"));
 			user.setPassword(res.getString("password"));
 			user.setVersion(res.getInt("version"));
+			user.setStatus(res.getString("status"));
 		}
 		res.close();
 		con.close();
@@ -109,6 +114,7 @@ public class UserRDG implements Serializable {
 			user.setUsername(res.getString("username"));
 			user.setPassword(res.getString("password"));
 			user.setVersion(res.getInt("version"));
+			user.setStatus(res.getString("status"));
 		}
 		res.close();
 		con.close();
@@ -126,6 +132,7 @@ public class UserRDG implements Serializable {
 			user.setUsername(res.getString("username"));
 			user.setPassword(res.getString("password"));
 			user.setVersion(res.getInt("version"));
+			user.setStatus(res.getString("status"));
 		}
 		res.close();
 		con.close();
@@ -144,6 +151,7 @@ public class UserRDG implements Serializable {
 			user.setUsername(res.getString("username"));
 			user.setPassword(res.getString("password"));
 			user.setVersion(res.getInt("version"));
+			user.setStatus(res.getString("status"));
 			list.add(user);
 		}
 		res.close();
@@ -181,6 +189,14 @@ public class UserRDG implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

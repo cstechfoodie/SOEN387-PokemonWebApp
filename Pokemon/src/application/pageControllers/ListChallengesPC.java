@@ -32,8 +32,7 @@ public class ListChallengesPC extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		processRequest(request, response);
 	}
 
 	/**
@@ -45,21 +44,24 @@ public class ListChallengesPC extends HttpServlet {
 	}
 	
 	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		ArrayList<ChallengeRDG> c = null;
+		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
+		ArrayList<ChallengeRDG> challenges = null;
 		try {
-			c = ChallengeRDG.findAll();
+			challenges = (ArrayList<ChallengeRDG>) ChallengeRDG.findAll();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (c.size() == 0) {
-			req.setAttribute("message", "No players exist.");
+		if(id < 0) {
+			req.setAttribute("message", "You have not successfully logged in.");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
 		} else {
-			req.setAttribute("challenges", c);
+			req.setAttribute("challenges", challenges);
 			req.setAttribute("status", "success");
 			req.getRequestDispatcher("WEB-INF/jsp/listChallenges.jsp").forward(req, res);
+			return;	
 		}
 	}
 

@@ -44,7 +44,7 @@ public class BenchCardRDG {
 	}
 
 
-	public void setBenchId(int benchId) {
+	public void setHandId(int benchId) {
 		this.benchId = benchId;
 	}
 
@@ -105,7 +105,7 @@ public class BenchCardRDG {
 		return res;
 	}
 	
-	public static int BenchSize(int id) throws SQLException {
+	public static int benchSize(int id) throws SQLException {
 		String sql = "SELECT COUNT(\"benchId\") AS count FROM BENCHCARD WHERE benchId = '" + id + "';";
 		Connection con = DbConnectionManager.getConnection();
 		ResultSet rs = con.createStatement()
@@ -125,7 +125,7 @@ public class BenchCardRDG {
 		BenchCardRDG card = null;
 		while (res.next()) {
 			card = new BenchCardRDG();
-			card.setBenchId(res.getInt("benchId"));
+			card.setHandId(res.getInt("benchId"));
 			card.setSequenceId(res.getInt("sequenceId"));
 			card.setName(res.getString("name"));
 			card.setType(res.getString("type"));

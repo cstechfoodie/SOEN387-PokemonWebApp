@@ -16,6 +16,15 @@ public class GameRDG {
 	private int challengee;
 	
 	private int version;
+	
+	public GameRDG() {};
+	
+	public GameRDG(int id, int challenger, int challengee, int version) {
+		this.id = id;
+		this.challenger = challenger;
+		this.challengee = challengee;
+		this.version = version;
+	}
 
 	public int getId() {
 		return id;

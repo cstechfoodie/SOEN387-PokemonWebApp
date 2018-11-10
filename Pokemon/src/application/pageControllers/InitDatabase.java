@@ -46,7 +46,7 @@ public class InitDatabase extends HttpServlet {
 		Connection con = DbConnectionManager.getConnection();
 		try {
 			
-			con.createStatement().executeUpdate("CREATE TABLE USER (id int, version int, username varchar(255), password varchar(255), PRIMARY KEY (id));");
+			con.createStatement().executeUpdate("CREATE TABLE USER (id int, version int, username varchar(255), password varchar(255), status varchar(255), PRIMARY KEY (id));");
 //			con.createStatement().executeUpdate("CREATE TABLE CARDTYPE (\n" + 
 //					"  `id` INT NOT NULL,\n" + 
 //					"  `type` VARCHAR(1) NOT NULL,\n" + 
@@ -81,13 +81,13 @@ public class InitDatabase extends HttpServlet {
 //					"  `benchId` INT,\n" + 
 //					"  `gameId` INT,\n" + 
 //					"  PRIMARY KEY (`id`));");
-//			con.createStatement().executeUpdate("CREATE TABLE CHALLENGE (\n" + 
-//					"  `id` INT NOT NULL,\n" + 
-//					"  `version` INT,\n" + 
-//					"  `challenger` INT,\n" + 
-//					"  `challengee` INT,\n" + 
-//					"  `status` INT,\n" + 
-//					"  PRIMARY KEY (`id`));");
+			con.createStatement().executeUpdate("CREATE TABLE CHALLENGE (\n" + 
+					"  `id` INT NOT NULL,\n" + 
+					"  `version` INT,\n" + 
+					"  `challenger` INT,\n" + 
+					"  `challengee` INT,\n" + 
+					"  `status` INT,\n" + 
+					"  PRIMARY KEY (`id`));");
 			
 //			con.createStatement().executeUpdate("CREATE TABLE GAME (\n" + 
 //			"  `id` INT NOT NULL,\n" + 

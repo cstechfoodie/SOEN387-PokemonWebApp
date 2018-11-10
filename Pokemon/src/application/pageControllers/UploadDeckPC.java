@@ -74,13 +74,8 @@ public class UploadDeckPC extends HttpServlet {
 				return;
 			} else {
 				Deck d = new Deck();
-				try {
-					d.setId(SingleAppUniqueIdFactory.getMaxId("DECKCARD", "deckId"));
-					req.getSession().setAttribute("deckId", d.getId());
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				d.setId(id);
+				req.getSession().setAttribute("deckId", d.getId());
 				DeckCardRDG card = null;
 				for(int i = 1; i <= 40; i++) {
 					card = new DeckCardRDG();

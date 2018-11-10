@@ -1,5 +1,4 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
-
 <json:object>
   <json:array name="challenges" var="item" items="${challenges}">
     <json:object>

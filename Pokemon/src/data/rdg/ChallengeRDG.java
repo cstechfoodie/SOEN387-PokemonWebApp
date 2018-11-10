@@ -127,7 +127,7 @@ public class ChallengeRDG {
 			ch.setId(res.getInt("id"));
 			ch.setVersion(res.getInt("version"));
 			ch.setChallenger(res.getInt("challenger"));
-			ch.setChallenger(res.getInt("challengee"));
+			ch.setChallengee(res.getInt("challengee"));
 			ch.setStatus(res.getInt("status"));
 		}
 		res.close();
@@ -146,12 +146,32 @@ public class ChallengeRDG {
 			ch.setId(res.getInt("id"));
 			ch.setVersion(res.getInt("version"));
 			ch.setChallenger(res.getInt("challenger"));
-			ch.setChallenger(res.getInt("challengee"));
+			ch.setChallengee(res.getInt("challengee"));
 			ch.setStatus(res.getInt("status"));
 			list.add(ch);
 		}
 		res.close();
 		con.close();
 		return list;
+	}
+	
+	public synchronized static boolean updateStatus(int id, int version, int status) throws SQLException {
+		String sql = "UPDATE CHALLENGE" + 
+				"SET version = ?, status = ?" + 
+				"WHERE id =" + id + "AND version = " + version + ";";
+		Connection con = DbConnectionManager.getConnection();
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1, version + 1);
+		ps.setInt(2, status);
+		int res = ps.executeUpdate();
+		ps.close();
+		con.close();
+		
+		ChallengeRDG ch = ChallengeRDG.find(id);
+		if(ch.getVersion() == version + 1) {
+			return true;
+		}
+		
+		return false;
 	}
 }
