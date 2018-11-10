@@ -46,7 +46,7 @@ public class InitDatabase extends HttpServlet {
 		Connection con = DbConnectionManager.getConnection();
 		try {
 			
-			//con.createStatement().executeUpdate("CREATE TABLE USER (id int, version int, username varchar(255), password varchar(255), PRIMARY KEY (id));");
+			con.createStatement().executeUpdate("CREATE TABLE USER (id int, version int, username varchar(255), password varchar(255), PRIMARY KEY (id));");
 //			con.createStatement().executeUpdate("CREATE TABLE CARDTYPE (\n" + 
 //					"  `id` INT NOT NULL,\n" + 
 //					"  `type` VARCHAR(1) NOT NULL,\n" + 
@@ -58,16 +58,54 @@ public class InitDatabase extends HttpServlet {
 					"  `type` VARCHAR(1) NOT NULL,\n" + 
 					"  `name` VARCHAR(255) NOT NULL,\n" + 
 					"  PRIMARY KEY (`deckId`, `sequenceId`));");
+//			con.createStatement().executeUpdate("CREATE TABLE BENCHCARD (\n" + 
+//					"  `benchId` INT NOT NULL,\n" + 
+//					"  `sequenceId` INT NOT NULL,\n" + 
+//					"  `type` VARCHAR(1) NOT NULL,\n" + 
+//					"  `name` VARCHAR(255) NOT NULL,\n" + 
+//					"  PRIMARY KEY (`benchId`, `sequenceId`));");
+//			
+//			con.createStatement().executeUpdate("CREATE TABLE HANDCARD (\n" + 
+//					"  `handId` INT NOT NULL,\n" + 
+//					"  `sequenceId` INT NOT NULL,\n" + 
+//					"  `type` VARCHAR(1) NOT NULL,\n" + 
+//					"  `name` VARCHAR(255) NOT NULL,\n" + 
+//					"  PRIMARY KEY (`handId`, `sequenceId`));");
+			
+//			con.createStatement().executeUpdate("CREATE TABLE PLAYER (\n" + 
+//					"  `id` INT NOT NULL,\n" + 
+//					"  `version` INT,\n" +
+//					"  `status` varchar(255),\n" + 
+//					"  `deckId` INT,\n" + 
+//					"  `handId` INT,\n" + 
+//					"  `benchId` INT,\n" + 
+//					"  `gameId` INT,\n" + 
+//					"  PRIMARY KEY (`id`));");
 //			con.createStatement().executeUpdate("CREATE TABLE CHALLENGE (\n" + 
 //					"  `id` INT NOT NULL,\n" + 
-//					"  `version` INT NOT NULL,\n" + 
-//					"  `challenger` INT NOT NULL,\n" + 
-//					"  `challengee` INT NOT NULL,\n" + 
-//					"  `status` INT NOT NULL,\n" + 
+//					"  `version` INT,\n" + 
+//					"  `challenger` INT,\n" + 
+//					"  `challengee` INT,\n" + 
+//					"  `status` INT,\n" + 
 //					"  PRIMARY KEY (`id`));");
+			
+//			con.createStatement().executeUpdate("CREATE TABLE GAME (\n" + 
+//			"  `id` INT NOT NULL,\n" + 
+//			"  `version` INT,\n" + 
+//			"  `challenger` INT,\n" + 
+//			"  `challengee` INT,\n" + 
+//			"  PRIMARY KEY (`id`));");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		System.out.println("Database Tables Have Been Initialized.");
 	}

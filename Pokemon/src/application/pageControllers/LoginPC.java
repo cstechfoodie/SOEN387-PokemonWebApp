@@ -59,12 +59,14 @@ public class LoginPC extends HttpServlet {
 			req.setAttribute("message", "I do not recognize that username and password combination.");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
 		} else {
 			long id = u.getId();
 			req.getSession(true).setAttribute("userid", id);
 			req.setAttribute("message", "User " + u.getUsername() + " has been successfully logged in.");
 			req.setAttribute("status", "success");
 			req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+			return;
 		}
 	}
 }

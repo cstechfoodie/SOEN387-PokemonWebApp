@@ -50,8 +50,8 @@ public class Deck {
 		return true;
 	}
 	
-	public static List<DeckCardRDG> viewDeck(int deckId) {
-		List<DeckCardRDG> cards = null;
+	public static ArrayList<DeckCardRDG> viewDeck(int deckId) {
+		ArrayList<DeckCardRDG> cards = null;
 		try {
 			cards = DeckCardRDG.viewDeck(deckId);
 		} catch (SQLException e) {

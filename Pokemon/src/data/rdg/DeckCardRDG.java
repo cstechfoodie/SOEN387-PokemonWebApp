@@ -76,6 +76,7 @@ public class DeckCardRDG {
 		ps.setString(4, this.name);
 		int res = ps.executeUpdate();
 		ps.close();
+		con.close();
 		return res;
 	}
 	
@@ -85,14 +86,16 @@ public class DeckCardRDG {
 		PreparedStatement ps = con.prepareStatement(sql);
 		int res = ps.executeUpdate();
 		ps.close();
+		con.close();
 		return res;
 	}
 	
 	//return a list of cards associate with the deckId
 	public static ArrayList<DeckCardRDG> viewDeck(int deckId) throws SQLException{
 		ArrayList<DeckCardRDG> list = new ArrayList<>();
-		String sql = "SELECT * FROM DECKCARD WHERE deckId = '" + deckId + "';";
-		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
+		String sql = "SELECT * FROM DECKCARD WHERE deckId = '" + deckId + "' ORDER BY sequenceId ASC;";
+		Connection con = DbConnectionManager.getConnection();
+		ResultSet res = con.createStatement().executeQuery(sql);
 		DeckCardRDG card = null;
 		while (res.next()) {
 			card = new DeckCardRDG();
@@ -103,6 +106,7 @@ public class DeckCardRDG {
 			list.add(card);
 		}
 		res.close();
+		con.close();
 		return list;
 	}
 }

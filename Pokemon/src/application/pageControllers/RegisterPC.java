@@ -53,6 +53,7 @@ public class RegisterPC extends HttpServlet {
 			req.setAttribute("message", "Please enter both a username and a password.");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
 		} else {
 			UserRDG u = null;
 			try {
@@ -65,6 +66,7 @@ public class RegisterPC extends HttpServlet {
 				req.setAttribute("message", "That user has already registered.");
 				req.setAttribute("status", "fail");
 				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				return;
 			} else {
 				u = new UserRDG(user, pass);
 				try {
@@ -78,6 +80,7 @@ public class RegisterPC extends HttpServlet {
 				req.setAttribute("message", "User " + user + " has been successfully registered.");
 				req.setAttribute("status", "success");
 				req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+				return;
 			}
 		}
 	}

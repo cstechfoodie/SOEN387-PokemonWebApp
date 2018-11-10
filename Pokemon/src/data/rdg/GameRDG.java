@@ -5,35 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import data.connection.DbConnectionManager;
-import domain.service.SingleAppUniqueIdFactory;
 
-public class ChallengeRDG {
+public class GameRDG {
 	private int id;
-	
-	private int version;
 	
 	private int challenger;
 	
 	private int challengee;
 	
-	private int status;
-	
-	public ChallengeRDG() {};
-	
-	public ChallengeRDG(int challenger, int challengee, int status) {
-		try {
-			this.id = SingleAppUniqueIdFactory.getMaxId("CHALLENGE", "id");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		this.version = 1;
-		this.challengee = challengee;
-		this.challenger = challenger;
-		this.status = status;
-	}
+	private int version;
 
 	public int getId() {
 		return id;
@@ -41,14 +23,6 @@ public class ChallengeRDG {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
 	}
 
 	public int getChallenger() {
@@ -67,23 +41,22 @@ public class ChallengeRDG {
 		this.challengee = challengee;
 	}
 
-	public int getStatus() {
-		return status;
+	public int getVersion() {
+		return version;
 	}
 
-	public void setStatus(int status) {
-		this.status = status;
+	public void setVersion(int version) {
+		this.version = version;
 	}
 	
 	public int insert() throws SQLException {
-		String sql = "INSERT INTO CHALLENGE (id, version, challenger, challengee, status) VALUES (?, ?, ?, ?, ?);";
+		String sql = "INSERT INTO GAME (id, version, challenger, challengee) VALUES (?, ?, ?, ?);";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1, this.id);
 		ps.setInt(2, this.version);
 		ps.setInt(3, this.challenger);
 		ps.setInt(4, this.challengee);
-		ps.setInt(5, this.status);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
@@ -91,8 +64,8 @@ public class ChallengeRDG {
 	}
 
 	public int update() throws SQLException {
-		String sql = "UPDATE CHALLENGE" + 
-				"SET version = ?, challenger = ?, challengee = ?, status=?" + 
+		String sql = "UPDATE GAME" + 
+				"SET version = ?, challenger = ?, challengee = ?" + 
 				"WHERE id = ?;";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
@@ -100,7 +73,6 @@ public class ChallengeRDG {
 		ps.setInt(1, this.version + 1);
 		ps.setInt(2, this.challenger);
 		ps.setInt(3, this.challengee);
-		ps.setInt(4, this.status);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
@@ -108,7 +80,7 @@ public class ChallengeRDG {
 	}
 
 	public int delete() throws SQLException {
-		String sql = "DELETE FROM CHALLENGE WHERE id = '" + this.id + "';";
+		String sql = "DELETE FROM GAME WHERE id = '" + this.id + "';";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		int res = ps.executeUpdate();
@@ -117,38 +89,36 @@ public class ChallengeRDG {
 		return res;
 	}
 	
-	public static ChallengeRDG find(int id) throws SQLException {
-		String sql = "SELECT * FROM CHALLENGE WHERE id = '" + id +"';";
+	public static GameRDG find(int id) throws SQLException {
+		String sql = "SELECT * FROM GAME WHERE id = '" + id +"';";
 		Connection con = DbConnectionManager.getConnection();
 		ResultSet res = con.createStatement().executeQuery(sql);
-		ChallengeRDG ch = null; 
+		GameRDG g = null; 
 		while (res.next()) {
-			ch = new ChallengeRDG();
-			ch.setId(res.getInt("id"));
-			ch.setVersion(res.getInt("version"));
-			ch.setChallenger(res.getInt("challenger"));
-			ch.setChallenger(res.getInt("challengee"));
-			ch.setStatus(res.getInt("status"));
+			g = new GameRDG();
+			g.setId(res.getInt("id"));
+			g.setVersion(res.getInt("version"));
+			g.setChallenger(res.getInt("challenger"));
+			g.setChallenger(res.getInt("challengee"));
 		}
 		res.close();
 		con.close();
-		return ch;
+		return g;
 	}
 	
-	public static ArrayList<ChallengeRDG> findAll() throws SQLException {
-		ArrayList<ChallengeRDG> list = new ArrayList<>();
-		String sql = "SELECT * FROM CHALLENGE;";
+	public static ArrayList<GameRDG> findAll() throws SQLException {
+		ArrayList<GameRDG> list = new ArrayList<>();
+		String sql = "SELECT * FROM GAME;";
 		Connection con = DbConnectionManager.getConnection();
 		ResultSet res = con.createStatement().executeQuery(sql);
-		ChallengeRDG ch = null; 
+		GameRDG g = null; 
 		while (res.next()) {
-			ch = new ChallengeRDG();
-			ch.setId(res.getInt("id"));
-			ch.setVersion(res.getInt("version"));
-			ch.setChallenger(res.getInt("challenger"));
-			ch.setChallenger(res.getInt("challengee"));
-			ch.setStatus(res.getInt("status"));
-			list.add(ch);
+			g = new GameRDG();
+			g.setId(res.getInt("id"));
+			g.setVersion(res.getInt("version"));
+			g.setChallenger(res.getInt("challenger"));
+			g.setChallenger(res.getInt("challengee"));
+			list.add(g);
 		}
 		res.close();
 		con.close();

@@ -58,6 +58,7 @@ public class UploadDeckPC extends HttpServlet {
 			req.setAttribute("message", "You have not successfully logged in.");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
 		} else {
 			String deck = req.getParameter("deck");
 			String[] deckCards = deck.split("\n");
@@ -65,14 +66,17 @@ public class UploadDeckPC extends HttpServlet {
 				req.setAttribute("message", "Deck size is too large (>40)");
 				req.setAttribute("status", "fail");
 				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				return;
 			} else if(deckCards.length < 40) {
-				req.setAttribute("message", "Deck size is too large (<40)");
+				req.setAttribute("message", "Deck size is too small (<40)");
 				req.setAttribute("status", "fail");
 				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				return;
 			} else {
 				Deck d = new Deck();
 				try {
 					d.setId(SingleAppUniqueIdFactory.getMaxId("DECKCARD", "deckId"));
+					req.getSession().setAttribute("deckId", d.getId());
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -84,7 +88,8 @@ public class UploadDeckPC extends HttpServlet {
 					card.setDeckId(d.getId());
 					card.setSequenceId(i);
 					card.setType(each[0].trim());
-					card.setName(each[1].trim());
+					String name = each[1].trim();
+					card.setName(name.substring(1, name.length()-1));
 					d.getCards().add(card);				
 				}
 				isSuccessful = d.uploadDeck();
@@ -93,10 +98,12 @@ public class UploadDeckPC extends HttpServlet {
 				req.setAttribute("message", "Upload Deck failed");
 				req.setAttribute("status", "fail");
 				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				return;
 			} else {
 				req.setAttribute("message", "Upload Deck Succeed");
 				req.setAttribute("status", "success");
 				req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+				return;
 			}
 		}
 	}

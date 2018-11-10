@@ -51,6 +51,7 @@ public class UserRDG implements Serializable {
 		ps.setString(4, this.password);
 		int res = ps.executeUpdate();
 		ps.close();
+		con.close();
 		return res;
 	}
 
@@ -66,6 +67,7 @@ public class UserRDG implements Serializable {
 		ps.setString(3, this.password);
 		int res = ps.executeUpdate();
 		ps.close();
+		con.close();
 		return res;
 	}
 
@@ -75,12 +77,14 @@ public class UserRDG implements Serializable {
 		PreparedStatement ps = con.prepareStatement(sql);
 		int res = ps.executeUpdate();
 		ps.close();
+		con.close();
 		return res;
 	}
 
 	public static UserRDG find(int id) throws SQLException {
 		String sql = "SELECT * FROM USER WHERE id = '" + id +"';";
-		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
+		Connection con = DbConnectionManager.getConnection();
+		ResultSet res = con.createStatement().executeQuery(sql);
 		UserRDG user = null; 
 		while (res.next()) {
 			user = new UserRDG();
@@ -90,12 +94,14 @@ public class UserRDG implements Serializable {
 			user.setVersion(res.getInt("version"));
 		}
 		res.close();
+		con.close();
 		return user;
 	}
 
 	public static UserRDG find(String username) throws SQLException {
 		String sql = "SELECT * FROM USER WHERE username = '" + username + "';";
-		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
+		Connection con = DbConnectionManager.getConnection();
+		ResultSet res = con.createStatement().executeQuery(sql);
 		UserRDG user = null;
 		while (res.next()) {
 			user = new UserRDG();
@@ -105,12 +111,14 @@ public class UserRDG implements Serializable {
 			user.setVersion(res.getInt("version"));
 		}
 		res.close();
+		con.close();
 		return user;
 	}
 
 	public static UserRDG find(String username, String password) throws SQLException {
 		String sql = "SELECT * FROM USER WHERE username = '" + username + "' AND password = '" + password +"';";
-		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
+		Connection con = DbConnectionManager.getConnection();
+		ResultSet res = con.createStatement().executeQuery(sql);
 		UserRDG user = null;
 		while (res.next()) {
 			user = new UserRDG();
@@ -120,13 +128,15 @@ public class UserRDG implements Serializable {
 			user.setVersion(res.getInt("version"));
 		}
 		res.close();
+		con.close();
 		return user;
 	}
 
 	public static ArrayList<UserRDG> findAll() throws SQLException {
 		ArrayList<UserRDG> list = new ArrayList<>();
 		String sql = "SELECT * FROM USER;";
-		ResultSet res = DbConnectionManager.getConnection().createStatement().executeQuery(sql);
+		Connection con = DbConnectionManager.getConnection();
+		ResultSet res = con.createStatement().executeQuery(sql);
 		UserRDG user = null;
 		while (res.next()) {
 			user = new UserRDG();
@@ -137,6 +147,7 @@ public class UserRDG implements Serializable {
 			list.add(user);
 		}
 		res.close();
+		con.close();
 		return list;
 	}
 
