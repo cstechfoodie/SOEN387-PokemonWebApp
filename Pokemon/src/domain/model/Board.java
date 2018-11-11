@@ -72,7 +72,7 @@ public class Board {
 		int handSize1 = this.findHandSize(challengerId);
 		s1.setHandSize(handSize1);
 		int deckSize1 = this.findDeckSize(challengerId);
-		s1.setDiscardSize(deckSize1);
+		s1.setDeckSize(deckSize1);
 		s1.setDiscardSize(40 - deckSize1 - handSize1);
 		s1.setStatus(findPlayerStatus(challengerId));
 		s1.setBench(findBenchCards(challengerId));
@@ -80,12 +80,12 @@ public class Board {
 		
 		State s2 = new State();
 		int handSize2 = this.findHandSize(challengeeId);
-		s1.setHandSize(handSize2);
+		s2.setHandSize(handSize2);
 		int deckSize2 = this.findDeckSize(challengeeId);
-		s1.setDiscardSize(deckSize2);
-		s1.setDiscardSize(40 - deckSize2 - handSize2);
-		s1.setStatus(findPlayerStatus(challengeeId));
-		s1.setBench(findBenchCards(challengeeId));
+		s2.setDeckSize(deckSize2);
+		s2.setDiscardSize(40 - deckSize2 - handSize2);
+		s2.setStatus(findPlayerStatus(challengeeId));
+		s2.setBench(findBenchCards(challengeeId));
 		play.put(challengeeId+"", s2);
 	}
 	

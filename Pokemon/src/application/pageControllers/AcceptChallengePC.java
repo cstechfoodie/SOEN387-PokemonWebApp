@@ -91,6 +91,18 @@ public class AcceptChallengePC extends HttpServlet {
 		
 		if(success) {
 			GameRDG g = new GameRDG(ch.getId(), ch.getChallenger(), ch.getChallengee(), ch.getVersion());
+			//should update player's status if more tests added
+//			try {
+//				UserRDG player1 = UserRDG.find(ch.getChallenger());
+//				UserRDG player2 = UserRDG.find(ch.getChallengee());
+//				player1.setStatus("playing");
+//				player2.setStatus("playing");
+//				player1.update();
+//				player2.update();
+//			} catch (SQLException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
 			try {
 				g.insert();
 			} catch (SQLException e) {

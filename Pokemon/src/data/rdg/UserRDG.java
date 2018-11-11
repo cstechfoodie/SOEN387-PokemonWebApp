@@ -61,7 +61,7 @@ public class UserRDG implements Serializable {
 	public int update() throws SQLException {
 		String sql = "UPDATE USER" + 
 				"SET version = ?, username = ?, password = ?, status = ?" + 
-				"WHERE id = ?;";
+				"WHERE id = ? AND version = ?;";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(5, this.id);
@@ -69,6 +69,7 @@ public class UserRDG implements Serializable {
 		ps.setString(2, this.username);
 		ps.setString(3, this.password);
 		ps.setString(4, this.status);
+		ps.setInt(6, this.version);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
