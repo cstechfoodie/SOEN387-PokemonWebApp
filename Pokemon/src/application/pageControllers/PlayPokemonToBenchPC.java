@@ -1,11 +1,15 @@
 package application.pageControllers;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import domain.model.Board;
 
 /**
  * Servlet implementation class PlayPokemonToBenchPC
@@ -35,7 +39,57 @@ public class PlayPokemonToBenchPC extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		processRequest(request, response);
+	}
+	
+	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		String game = req.getParameter("game");
+		String card = req.getParameter("card");
+		int gameId = Integer.parseInt(game);
+		int cardId = Integer.parseInt(card);
+		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
+		if(id < 0) {
+			req.setAttribute("message", "User Not Login");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		}
+		
+		Board board = new Board(gameId);
+		boolean isMyGame = false;
+		try {
+			isMyGame = board.isMyGame(id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(!isMyGame) {
+			req.setAttribute("message", "This is not your game.");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		} else {
+			try {
+				boolean success = board.playCardToBench(id, cardId);
+				if(success) {
+					req.setAttribute("message", "User with id =  " + id + " has successfully played a card.");
+					req.setAttribute("status", "success");
+					req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+					return;
+				}
+				else {
+					req.setAttribute("message", "This card is not in hand.");
+					req.setAttribute("status", "fail");
+					req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+					return;
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 }

@@ -46,6 +46,13 @@ public class InitDatabase extends HttpServlet {
 		Connection con = DbConnectionManager.getConnection();
 		try {
 			
+			con.createStatement().executeUpdate("DROP TABLE USER");
+			con.createStatement().executeUpdate("DROP TABLE DECKCARD");
+			con.createStatement().executeUpdate("DROP TABLE BENCHCARD");
+			con.createStatement().executeUpdate("DROP TABLE HANDCARD");
+			con.createStatement().executeUpdate("DROP TABLE CHALLENGE");
+			con.createStatement().executeUpdate("DROP TABLE GAME");
+			
 			con.createStatement().executeUpdate("CREATE TABLE USER (id int, version int, username varchar(255), password varchar(255), status varchar(255), PRIMARY KEY (id));");
 //			con.createStatement().executeUpdate("CREATE TABLE CARDTYPE (\n" + 
 //					"  `id` INT NOT NULL,\n" + 
@@ -58,19 +65,19 @@ public class InitDatabase extends HttpServlet {
 					"  `type` VARCHAR(1) NOT NULL,\n" + 
 					"  `name` VARCHAR(255) NOT NULL,\n" + 
 					"  PRIMARY KEY (`deckId`, `sequenceId`));");
-//			con.createStatement().executeUpdate("CREATE TABLE BENCHCARD (\n" + 
-//					"  `benchId` INT NOT NULL,\n" + 
-//					"  `sequenceId` INT NOT NULL,\n" + 
-//					"  `type` VARCHAR(1) NOT NULL,\n" + 
-//					"  `name` VARCHAR(255) NOT NULL,\n" + 
-//					"  PRIMARY KEY (`benchId`, `sequenceId`));");
-//			
-//			con.createStatement().executeUpdate("CREATE TABLE HANDCARD (\n" + 
-//					"  `handId` INT NOT NULL,\n" + 
-//					"  `sequenceId` INT NOT NULL,\n" + 
-//					"  `type` VARCHAR(1) NOT NULL,\n" + 
-//					"  `name` VARCHAR(255) NOT NULL,\n" + 
-//					"  PRIMARY KEY (`handId`, `sequenceId`));");
+			con.createStatement().executeUpdate("CREATE TABLE BENCHCARD (\n" + 
+					"  `benchId` INT NOT NULL,\n" + 
+					"  `sequenceId` INT NOT NULL,\n" + 
+					"  `type` VARCHAR(1) NOT NULL,\n" + 
+					"  `name` VARCHAR(255) NOT NULL,\n" + 
+					"  PRIMARY KEY (`benchId`, `sequenceId`));");
+			
+			con.createStatement().executeUpdate("CREATE TABLE HANDCARD (\n" + 
+					"  `handId` INT NOT NULL,\n" + 
+					"  `sequenceId` INT NOT NULL,\n" + 
+					"  `type` VARCHAR(1) NOT NULL,\n" + 
+					"  `name` VARCHAR(255) NOT NULL,\n" + 
+					"  PRIMARY KEY (`handId`, `sequenceId`));");
 			
 //			con.createStatement().executeUpdate("CREATE TABLE PLAYER (\n" + 
 //					"  `id` INT NOT NULL,\n" + 
@@ -89,12 +96,13 @@ public class InitDatabase extends HttpServlet {
 					"  `status` INT,\n" + 
 					"  PRIMARY KEY (`id`));");
 			
-//			con.createStatement().executeUpdate("CREATE TABLE GAME (\n" + 
-//			"  `id` INT NOT NULL,\n" + 
-//			"  `version` INT,\n" + 
-//			"  `challenger` INT,\n" + 
-//			"  `challengee` INT,\n" + 
-//			"  PRIMARY KEY (`id`));");
+			con.createStatement().executeUpdate("CREATE TABLE GAME (\n" + 
+					"  `id` INT NOT NULL,\n" + 
+					"  `version` INT,\n" + 
+					"  `challenger` INT,\n" + 
+					"  `challengee` INT,\n" + 
+					"  PRIMARY KEY (`id`));");
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

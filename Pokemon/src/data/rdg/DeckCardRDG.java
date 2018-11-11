@@ -109,4 +109,9 @@ public class DeckCardRDG {
 		con.close();
 		return list;
 	}
+	
+	public static int deckSize(int deckId) throws SQLException {
+		int size = viewDeck(deckId).size();
+		return size;
+	}
 }

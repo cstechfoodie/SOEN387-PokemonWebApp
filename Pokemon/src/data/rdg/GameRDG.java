@@ -17,6 +17,8 @@ public class GameRDG {
 	
 	private int version;
 	
+	private int[] players;
+	
 	public GameRDG() {};
 	
 	public GameRDG(int id, int challenger, int challengee, int version) {
@@ -24,6 +26,7 @@ public class GameRDG {
 		this.challenger = challenger;
 		this.challengee = challengee;
 		this.version = version;
+		this.players = new int[] {challenger, challengee};
 	}
 
 	public int getId() {
@@ -58,6 +61,14 @@ public class GameRDG {
 		this.version = version;
 	}
 	
+	public int[] getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(int[] players) {
+		this.players = players;
+	}
+
 	public int insert() throws SQLException {
 		String sql = "INSERT INTO GAME (id, version, challenger, challengee) VALUES (?, ?, ?, ?);";
 		Connection con = DbConnectionManager.getConnection();
@@ -109,6 +120,7 @@ public class GameRDG {
 			g.setVersion(res.getInt("version"));
 			g.setChallenger(res.getInt("challenger"));
 			g.setChallenger(res.getInt("challengee"));
+			g.setPlayers(new int[] {res.getInt("challenger"), res.getInt("challengee")});
 		}
 		res.close();
 		con.close();
@@ -127,6 +139,7 @@ public class GameRDG {
 			g.setVersion(res.getInt("version"));
 			g.setChallenger(res.getInt("challenger"));
 			g.setChallenger(res.getInt("challengee"));
+			g.setPlayers(new int[] {res.getInt("challenger"), res.getInt("challengee")});
 			list.add(g);
 		}
 		res.close();

@@ -61,7 +61,7 @@ public class LoginPC extends HttpServlet {
 			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
-			long id = u.getId();
+			int id = u.getId();
 			req.getSession(true).setAttribute("userid", id);
 			req.setAttribute("message", "User " + u.getUsername() + " has been successfully logged in.");
 			req.setAttribute("status", "success");

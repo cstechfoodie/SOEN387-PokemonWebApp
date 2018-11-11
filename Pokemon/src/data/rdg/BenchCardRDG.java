@@ -70,7 +70,7 @@ public class BenchCardRDG {
 
 
 	public int insert() throws SQLException {
-		String sql = "INSERT INTO BENCHCARD (id, benchId, sequenceId, cardtypeId) VALUES (?, ?, ?, ?);";
+		String sql = "INSERT INTO BENCHCARD (benchId, sequenceId, type, name) VALUES (?, ?, ?, ?);";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1, this.benchId);
@@ -105,8 +105,8 @@ public class BenchCardRDG {
 		return res;
 	}
 	
-	public static int benchSize(int id) throws SQLException {
-		String sql = "SELECT COUNT(\"benchId\") AS count FROM BENCHCARD WHERE benchId = '" + id + "';";
+	public static int benchSize(int benchId) throws SQLException {
+		String sql = "SELECT COUNT(\"benchId\") AS count FROM BENCHCARD WHERE benchId = '" + benchId + "';";
 		Connection con = DbConnectionManager.getConnection();
 		ResultSet rs = con.createStatement()
 				.executeQuery(sql);
@@ -135,4 +135,5 @@ public class BenchCardRDG {
 		con.close();
 		return list;
 	}
+	
 }

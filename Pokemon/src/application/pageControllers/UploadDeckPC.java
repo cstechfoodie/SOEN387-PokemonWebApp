@@ -77,9 +77,9 @@ public class UploadDeckPC extends HttpServlet {
 				d.setId(id);
 				req.getSession().setAttribute("deckId", d.getId());
 				DeckCardRDG card = null;
-				for(int i = 1; i <= 40; i++) {
+				for(int i = 0; i < 40; i++) {
 					card = new DeckCardRDG();
-					String[] each = deckCards[i-1].split(" ");
+					String[] each = deckCards[i].split(" ");
 					card.setDeckId(d.getId());
 					card.setSequenceId(i);
 					card.setType(each[0].trim());

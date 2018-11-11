@@ -156,9 +156,9 @@ public class ChallengeRDG {
 	}
 	
 	public synchronized static boolean updateStatus(int id, int version, int status) throws SQLException {
-		String sql = "UPDATE CHALLENGE" + 
-				"SET version = ?, status = ?" + 
-				"WHERE id =" + id + "AND version = " + version + ";";
+		String sql = "UPDATE CHALLENGE\n" + 
+				"SET version = ?, status = ? \n" + 
+				"WHERE id = " + id + " AND version = " + version + ";";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1, version + 1);

@@ -70,7 +70,7 @@ public class HandCardRDG {
 
 
 	public int insert() throws SQLException {
-		String sql = "INSERT INTO HANDCARD (id, handId, sequenceId, cardtypeId) VALUES (?, ?, ?, ?);";
+		String sql = "INSERT INTO HANDCARD (handId, sequenceId, type, name) VALUES (?, ?, ?, ?);";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1, this.handId);
@@ -105,8 +105,8 @@ public class HandCardRDG {
 		return res;
 	}
 	
-	public static int handSize(int id) throws SQLException {
-		String sql = "SELECT COUNT(\"handId\") AS count FROM HANDCARD WHERE handId = '" + id + "';";
+	public static int handSize(int handId) throws SQLException {
+		String sql = "SELECT COUNT(\"handId\") AS count FROM HANDCARD WHERE handId = '" + handId + "';";
 		Connection con = DbConnectionManager.getConnection();
 		ResultSet rs = con.createStatement()
 				.executeQuery(sql);
@@ -119,7 +119,7 @@ public class HandCardRDG {
 	//return a list of cards associate with the deckId
 	public static ArrayList<HandCardRDG> viewHand(int id) throws SQLException{
 		ArrayList<HandCardRDG> list = new ArrayList<>();
-		String sql = "SELECT * FROM HANDCARD WHERE handId = '" + id + "';";
+		String sql = "SELECT * FROM HANDCARD WHERE handId = '" + id + "' ORDER BY sequenceId ASC;";
 		Connection con = DbConnectionManager.getConnection();
 		ResultSet res = con.createStatement().executeQuery(sql);
 		HandCardRDG card = null;
@@ -135,4 +135,22 @@ public class HandCardRDG {
 		con.close();
 		return list;
 	}
+	
+	public static HandCardRDG find(int handId, int sequenceId) throws SQLException {
+		String sql = "SELECT * FROM HANDCARD WHERE handId = '" + handId + "' AND sequenceId = '" + sequenceId + "';";
+		Connection con = DbConnectionManager.getConnection();
+		ResultSet res = con.createStatement().executeQuery(sql);
+		HandCardRDG card = null;
+		while (res.next()) {
+			card = new HandCardRDG();
+			card.setHandId(res.getInt("handId"));
+			card.setSequenceId(res.getInt("sequenceId"));
+			card.setName(res.getString("name"));
+			card.setType(res.getString("type"));
+		}
+		res.close();
+		con.close();
+		return card;
+	}
+
 }
