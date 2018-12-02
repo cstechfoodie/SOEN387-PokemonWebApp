@@ -17,13 +17,17 @@ public class URIUtil {
 	}
 	
 	public static int parseForIdAtEnd(String uri) {
-		Pattern p = Pattern.compile("\\d+");
-        Matcher m = p.matcher(uri);
-        String match = "";
-        while(m.find()) {
-            match = m.group();
-        }
-        return Integer.parseInt(match);
+		try {
+			Pattern p = Pattern.compile("\\d+");
+			Matcher m = p.matcher(uri);
+			String match = "";
+			while(m.find()) {
+				match = m.group();
+			}
+			return Integer.parseInt(match);	
+		} catch (Exception e) {
+			return -1;
+		}
 	}
 	
 	

@@ -110,6 +110,11 @@ public class FrontController extends HttpServlet {
 			dp.processRequest(req, res);
 			return;
 		}
+		else if(req.getRequestURI().contains("/Game") && URIUtil.parseForIdAtEnd(req.getRequestURI()) > 0 && req.getMethod().equals("GET")) {
+			ViewBoardPC dp = new ViewBoardPC();
+			dp.processRequest(req, res);
+			return;
+		}
 		else if(req.getRequestURI().contains("/Game") && req.getMethod().equals("GET")) {
 
 			ListGamesPC dp = new ListGamesPC();
