@@ -44,7 +44,7 @@ public class ListPlayersPC extends HttpServlet {
 	}
 
 	
-	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
 		ArrayList<UserRDG> u = null;
 		try {
@@ -56,16 +56,16 @@ public class ListPlayersPC extends HttpServlet {
 		if(id < 0) {
 			req.setAttribute("message", "You have not successfully logged in.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 		} else {
 			if (u.size() == 0) {
 				req.setAttribute("message", "No players exist.");
 				req.setAttribute("status", "fail");
-				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			} else {
 				req.setAttribute("players", u);
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("WEB-INF/jsp/listPlayers.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/listPlayers.jsp").forward(req, res);
 			}	
 		}
 	}

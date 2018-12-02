@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DbConnectionManager {
+	
+	private static Connection globalConnection; 
 
 	public static Connection getConnection() {
 		Connection con = null;
@@ -27,4 +29,22 @@ public class DbConnectionManager {
 		}
 		return con;
 	}
+	
+	public static Connection getGlobalConnection() {
+		if(globalConnection == null) {
+			globalConnection = getConnection();
+		}
+		return globalConnection;
+	}
+	
+	public static void closeGlobalConnection() {
+		if(globalConnection != null) {
+			try {
+				globalConnection.close();
+			} catch (SQLException e) {
+				System.out.println("error in close global connection");
+			}
+		}
+	}
+	
 }

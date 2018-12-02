@@ -45,7 +45,7 @@ public class LoginPC extends HttpServlet {
 		doGet(request, response);
 	}
 
-	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String user = req.getParameter("user");
 		String pass = req.getParameter("pass");
 		UserRDG u = null;
@@ -58,14 +58,14 @@ public class LoginPC extends HttpServlet {
 		if (u == null) {
 			req.setAttribute("message", "I do not recognize that username and password combination.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
 			int id = u.getId();
 			req.getSession(true).setAttribute("userid", id);
 			req.setAttribute("message", "User " + u.getUsername() + " has been successfully logged in.");
 			req.setAttribute("status", "success");
-			req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
 			return;
 		}
 	}

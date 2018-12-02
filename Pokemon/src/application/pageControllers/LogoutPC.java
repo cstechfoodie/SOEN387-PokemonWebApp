@@ -51,7 +51,7 @@ public class LogoutPC extends HttpServlet {
 		} catch (Exception e) {
 			req.setAttribute("message", "You have not successfully logged in.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		}
 		UserRDG u = null;
@@ -64,7 +64,7 @@ public class LogoutPC extends HttpServlet {
 		if(id > 0 && u != null && id == u.getId()) {
 			req.setAttribute("message", "User " + u.getUsername() + " has been successfully logged out.");
 			req.setAttribute("status", "success");
-			req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
 			return;
 		} 
 	}

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import application.util.URIUtil;
 import data.rdg.ChallengeRDG;
 import data.rdg.DeckCardRDG;
 import data.rdg.UserRDG;
@@ -46,29 +47,33 @@ public class ChallengePlayerPC extends HttpServlet {
 		processRequest(request, response);
 	}
 	
-	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String player = req.getParameter("player");
-		int playerId = Integer.parseInt(player);
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		int deckId = Integer.parseInt(req.getParameter("deck"));
+		int playerId = URIUtil.parseForIdInBeteewn(req.getRequestURI());
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
 		if(id < 0) {
 			req.setAttribute("message", "User Not Login");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		}
 		if(playerId == id) {
 			req.setAttribute("message", "Can't challenge yourself.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		}
-		Deck d = new Deck();
-		d.setId(id);
-		ArrayList<DeckCardRDG> cards = d.viewDeck();
+		if(Deck.isMyOwnDeck(playerId, deckId)) {
+			req.setAttribute("message", "Can't chanllenge with someone else's deck.");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		}
+		ArrayList<DeckCardRDG> cards = Deck.viewDeck(deckId);
 		if(cards.size() == 0) {
 			req.setAttribute("message", "No deck uploaded");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		}
 		
@@ -83,10 +88,10 @@ public class ChallengePlayerPC extends HttpServlet {
 		if (u == null) {
 			req.setAttribute("message", "Invalid challengee id");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
-			ChallengeRDG ch = new ChallengeRDG(id, playerId, 0);
+			ChallengeRDG ch = new ChallengeRDG(id, playerId, 0, deckId);
 			try {
 				ch.insert();
 			} catch (SQLException e) {
@@ -95,7 +100,7 @@ public class ChallengePlayerPC extends HttpServlet {
 			}
 			req.setAttribute("message", "Challenge with id =  " + ch.getId() + " has been successfully created.");
 			req.setAttribute("status", "success");
-			req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
 			return;
 		}
 	}

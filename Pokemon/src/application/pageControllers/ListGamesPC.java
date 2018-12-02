@@ -45,7 +45,7 @@ public class ListGamesPC extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
 		ArrayList<GameRDG> games = null;
 		try {
@@ -57,12 +57,12 @@ public class ListGamesPC extends HttpServlet {
 		if(id < 0) {
 			req.setAttribute("message", "You have not successfully logged in.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
 				req.setAttribute("games", games);
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("WEB-INF/jsp/listGames.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/listGames.jsp").forward(req, res);
 				return;
 		}
 	}

@@ -50,14 +50,14 @@ public class UploadDeckPC extends HttpServlet {
 		processRequest(request, response);
 	}
 
-	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		int id = req.getSession(true).getAttribute("userid") == null ? -1
 				: (int) req.getSession(true).getAttribute("userid");
 		boolean isSuccessful = false;
 		if (id < 0) {
 			req.setAttribute("message", "You have not successfully logged in.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
 			String deck = req.getParameter("deck");
@@ -65,26 +65,38 @@ public class UploadDeckPC extends HttpServlet {
 			if(deckCards.length > 40) {
 				req.setAttribute("message", "Deck size is too large (>40)");
 				req.setAttribute("status", "fail");
-				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 				return;
 			} else if(deckCards.length < 40) {
 				req.setAttribute("message", "Deck size is too small (<40)");
 				req.setAttribute("status", "fail");
-				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 				return;
 			} else {
 				Deck d = new Deck();
-				d.setId(id);
+				int newDeckId = 0;
+				try {
+					newDeckId = SingleAppUniqueIdFactory.getMaxId("DECKCARD", "deckId");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				d.setId(newDeckId); // may change latter
 				req.getSession().setAttribute("deckId", d.getId());
 				DeckCardRDG card = null;
 				for(int i = 0; i < 40; i++) {
 					card = new DeckCardRDG();
 					String[] each = deckCards[i].split(" ");
+					card.setPlayerId(id);
 					card.setDeckId(d.getId());
 					card.setSequenceId(i);
 					card.setType(each[0].trim());
 					String name = each[1].trim();
 					card.setName(name.substring(1, name.length()-1));
+					if(each.length == 3 && each[2].trim().length() != 0 && each[2] != null) {
+						String basic = each[2].trim();
+						card.setBasic(basic.substring(1, basic.length()-1));
+					}
 					d.getCards().add(card);				
 				}
 				isSuccessful = d.uploadDeck();
@@ -92,12 +104,12 @@ public class UploadDeckPC extends HttpServlet {
 			if (!isSuccessful) {
 				req.setAttribute("message", "Upload Deck failed");
 				req.setAttribute("status", "fail");
-				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 				return;
 			} else {
 				req.setAttribute("message", "Upload Deck Succeed");
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
 				return;
 			}
 		}

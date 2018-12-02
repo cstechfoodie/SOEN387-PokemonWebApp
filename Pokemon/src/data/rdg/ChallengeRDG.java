@@ -21,9 +21,19 @@ public class ChallengeRDG {
 	
 	private int status;
 	
+	private int deck;
+	
+	public int getDeck() {
+		return deck;
+	}
+
+	public void setDeck(int deck) {
+		this.deck = deck;
+	}
+
 	public ChallengeRDG() {};
 	
-	public ChallengeRDG(int challenger, int challengee, int status) {
+	public ChallengeRDG(int challenger, int challengee, int status, int deck) {
 		try {
 			this.id = SingleAppUniqueIdFactory.getMaxId("CHALLENGE", "id");
 		} catch (SQLException e) {
@@ -33,6 +43,7 @@ public class ChallengeRDG {
 		this.challengee = challengee;
 		this.challenger = challenger;
 		this.status = status;
+		this.deck = deck;
 	}
 
 	public int getId() {
@@ -76,7 +87,7 @@ public class ChallengeRDG {
 	}
 	
 	public int insert() throws SQLException {
-		String sql = "INSERT INTO CHALLENGE (id, version, challenger, challengee, status) VALUES (?, ?, ?, ?, ?);";
+		String sql = "INSERT INTO CHALLENGE (id, version, challenger, challengee, status, deck) VALUES (?, ?, ?, ?, ?, ?);";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1, this.id);
@@ -84,6 +95,7 @@ public class ChallengeRDG {
 		ps.setInt(3, this.challenger);
 		ps.setInt(4, this.challengee);
 		ps.setInt(5, this.status);
+		ps.setInt(6, this.deck);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
@@ -92,15 +104,16 @@ public class ChallengeRDG {
 
 	public int update() throws SQLException {
 		String sql = "UPDATE CHALLENGE" + 
-				"SET version = ?, challenger = ?, challengee = ?, status=?" + 
+				"SET version = ?, challenger = ?, challengee = ?, status=?, deck=?" + 
 				"WHERE id = ?;";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setInt(5, this.id);
+		ps.setInt(6, this.id);
 		ps.setInt(1, this.version + 1);
 		ps.setInt(2, this.challenger);
 		ps.setInt(3, this.challengee);
 		ps.setInt(4, this.status);
+		ps.setInt(5, this.deck);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
@@ -129,6 +142,7 @@ public class ChallengeRDG {
 			ch.setChallenger(res.getInt("challenger"));
 			ch.setChallengee(res.getInt("challengee"));
 			ch.setStatus(res.getInt("status"));
+			ch.setDeck(res.getInt("deck"));
 		}
 		res.close();
 		con.close();
@@ -148,6 +162,7 @@ public class ChallengeRDG {
 			ch.setChallenger(res.getInt("challenger"));
 			ch.setChallengee(res.getInt("challengee"));
 			ch.setStatus(res.getInt("status"));
+			ch.setDeck(res.getInt("deck"));
 			list.add(ch);
 		}
 		res.close();
@@ -155,21 +170,26 @@ public class ChallengeRDG {
 		return list;
 	}
 	
-	public synchronized static boolean updateStatus(int id, int version, int status) throws SQLException {
+	public synchronized static boolean updateStatus(int id, int version, int status) {
 		String sql = "UPDATE CHALLENGE\n" + 
 				"SET version = ?, status = ? \n" + 
 				"WHERE id = " + id + " AND version = " + version + ";";
 		Connection con = DbConnectionManager.getConnection();
-		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setInt(1, version + 1);
-		ps.setInt(2, status);
-		int res = ps.executeUpdate();
-		ps.close();
-		con.close();
-		
-		ChallengeRDG ch = ChallengeRDG.find(id);
-		if(ch.getVersion() == version + 1) {
-			return true;
+		PreparedStatement ps;
+		try {
+			ps = con.prepareStatement(sql);
+			ps.setInt(1, version + 1);
+			ps.setInt(2, status);
+			int res = ps.executeUpdate();
+			ps.close();
+			con.close();
+			
+			ChallengeRDG ch = ChallengeRDG.find(id);
+			if(ch.getVersion() == version + 1) {
+				return true;
+			}
+		} catch (SQLException e) {
+			return false;
 		}
 		
 		return false;

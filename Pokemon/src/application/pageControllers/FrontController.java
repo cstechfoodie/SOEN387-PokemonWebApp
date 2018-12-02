@@ -9,19 +9,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import application.util.URIUtil;
 import data.connection.DbConnectionManager;
 
 /**
  * Servlet implementation class InitDatabase
  */
 
-public class InitDatabase extends HttpServlet {
+public class FrontController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public InitDatabase() {
+    public FrontController() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -30,16 +31,93 @@ public class InitDatabase extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		System.out.println("REQUEST from FrontController doGet--> " + request.getRequestURI());
+		processRequest(request, response);
+		return;
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		System.out.println("REQUEST from FrontController doPost--> " + request.getRequestURI());
+		processRequest(request, response);
+		return;
+	}
+	
+	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		if(req.getRequestURI().contains("/Player/Register")) {
+			RegisterPC dp = new RegisterPC();
+			dp.processRequest(req, res);
+			return;
+		}
+		
+		else if(req.getRequestURI().contains("/Player/Login")) {
+			LoginPC dp = new LoginPC();
+			dp.processRequest(req, res);
+			return;
+		}
+		
+		else if(req.getRequestURI().contains("/Player/Logout")) {
+			LogoutPC dp = new LogoutPC();
+			dp.processRequest(req, res);
+			return;
+		}
+		else if(req.getRequestURI().contains("/Deck") && req.getMethod().equals("POST")) {
+
+			UploadDeckPC dp = new UploadDeckPC();
+			dp.processRequest(req, res);
+			return;
+		}
+		else if(req.getRequestURI().contains("/Deck") && req.getMethod().equals("GET")) {
+			ViewDeckPC dp = new ViewDeckPC();
+			if(URIUtil.numbersInUrI(req.getRequestURI()) > 0) {
+				dp.viewDeck(req, res);
+			} else {
+				dp.viewDecks(req, res);
+			}
+			return;
+		}
+		
+		else if(req.getRequestURI().contains("/Player") && req.getMethod().equals("GET")) {
+			ListPlayersPC dp = new ListPlayersPC();
+			dp.processRequest(req, res);
+			return;
+		}
+		else if(req.getRequestURI().contains("/Player") && req.getRequestURI().contains("/Challenge") && req.getMethod().equals("POST")) {
+				ChallengePlayerPC dp = new ChallengePlayerPC();
+				dp.processRequest(req, res);
+				return;				
+		}
+		else if(req.getRequestURI().contains("/Challenge") && req.getMethod().equals("GET")) {
+			ListChallengesPC dp = new ListChallengesPC();
+			dp.processRequest(req, res);
+			return;
+		}
+		else if(req.getRequestURI().contains("/Challenge") && req.getRequestURI().contains("/Accept") && req.getMethod().equals("POST")) {
+			AcceptChallengePC dp = new AcceptChallengePC();
+			dp.processRequest(req, res);
+			return;
+		}
+		else if(req.getRequestURI().contains("/Challenge") && req.getRequestURI().contains("/Refuse") && req.getMethod().equals("POST")) {
+			RefuseChallengePC dp = new RefuseChallengePC();
+			dp.processRequest(req, res);
+			return;
+		}
+		
+		else if(req.getRequestURI().contains("/Challenge") && req.getRequestURI().contains("/Withdraw") && req.getMethod().equals("POST")) {
+			RefuseChallengePC dp = new RefuseChallengePC();
+			dp.processRequest(req, res);
+			return;
+		}
+		else if(req.getRequestURI().contains("/Game") && req.getMethod().equals("GET")) {
+
+			ListGamesPC dp = new ListGamesPC();
+			dp.processRequest(req, res);
+			return;
+		}
+		
+		return;
 	}
 	
 	public void init() throws ServletException{
@@ -60,10 +138,12 @@ public class InitDatabase extends HttpServlet {
 //					"  `name` VARCHAR(255) NOT NULL,\n" + 
 //					"  PRIMARY KEY (`id`));");
 			con.createStatement().executeUpdate("CREATE TABLE DECKCARD (\n" + 
+					"  `playerId` INT NOT NULL,\n" + 
 					"  `deckId` INT NOT NULL,\n" + 
 					"  `sequenceId` INT NOT NULL,\n" + 
 					"  `type` VARCHAR(1) NOT NULL,\n" + 
 					"  `name` VARCHAR(255) NOT NULL,\n" + 
+					"  `basic` VARCHAR(255),\n" + 
 					"  PRIMARY KEY (`deckId`, `sequenceId`));");
 			con.createStatement().executeUpdate("CREATE TABLE BENCHCARD (\n" + 
 					"  `benchId` INT NOT NULL,\n" + 
@@ -94,6 +174,7 @@ public class InitDatabase extends HttpServlet {
 					"  `challenger` INT,\n" + 
 					"  `challengee` INT,\n" + 
 					"  `status` INT,\n" + 
+					"  `deck` INT,\n" + 
 					"  PRIMARY KEY (`id`));");
 			
 			con.createStatement().executeUpdate("CREATE TABLE GAME (\n" + 

@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
+
 import data.rdg.UserRDG;
 
 /**
@@ -52,7 +54,7 @@ public class RegisterPC extends HttpServlet {
 		if (user == null || user.isEmpty() || pass == null || pass.isEmpty()) {
 			req.setAttribute("message", "Please enter both a username and a password.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
 			UserRDG u = null;
@@ -65,7 +67,7 @@ public class RegisterPC extends HttpServlet {
 			if (u != null) {
 				req.setAttribute("message", "That user has already registered.");
 				req.setAttribute("status", "fail");
-				req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 				return;
 			} else {
 				u = new UserRDG(user, pass);
@@ -79,7 +81,7 @@ public class RegisterPC extends HttpServlet {
 				req.getSession(true).setAttribute("userid", id);
 				req.setAttribute("message", "User " + user + " has been successfully registered.");
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
 				return;
 			}
 		}

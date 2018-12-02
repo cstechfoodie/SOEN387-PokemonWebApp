@@ -71,5 +71,31 @@ public class Deck {
 		return (ArrayList<DeckCardRDG>) this.cards;
 	}
 	
+	public static ArrayList<Integer> getDeckIds() {
+		try {
+			return DeckCardRDG.viewDecks();
+		} catch (SQLException e) {
+			return null;
+		}
+	}
+	
+	public static ArrayList<Integer> getDeckIdsByPlayer(int playerId) {
+		try {
+			return DeckCardRDG.viewDecksByPlayer(playerId);
+		} catch (SQLException e) {
+			return null;
+		}
+	}
+	
+	public static boolean isMyOwnDeck(int playerId, int deckId) {
+		ArrayList<Integer> deckIds = getDeckIdsByPlayer(playerId);
+		for(int i = 0; i < deckIds.size(); i++) {
+			if(deckIds.get(i) == deckId) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 }
