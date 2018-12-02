@@ -2,7 +2,9 @@
 <json:object>
 <json:object name="game">
 	<json:property name = "id" value="${id}"/>
+	<json:property name = "version" value="${version}"/>
   <json:array name="players" items="${players}"/>
+  <json:property name = "current" value="${current}"/>
   <json:array name="decks" items="${decks}"/>
   <json:object name ="play">
       <json:object name ="${player1}">

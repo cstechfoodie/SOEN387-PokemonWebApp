@@ -71,8 +71,10 @@ public class ViewBoardPC extends HttpServlet {
 			return;
 		} else {
 			try {
-				board.fillBoardData(gameId);
+				board.fillBoardData();
 				req.setAttribute("id", gameId);
+				req.setAttribute("version", board.getVersion());
+				req.setAttribute("current", board.getCurrent());
 				int[] players = board.getPlayers();
 				req.setAttribute("players", players);
 				int[] decks = board.getDecks();

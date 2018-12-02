@@ -13,9 +13,15 @@ public class GameRDG {
 	
 	private int challenger;
 	
+	private String challenger_status;
+	
 	private int challengee;
 	
+	private String challengee_status;
+	
 	private int version;
+	
+	private int current;
 	
 	private int[] players;
 	
@@ -24,9 +30,36 @@ public class GameRDG {
 	public GameRDG(int id, int challenger, int challengee, int version) {
 		this.id = id;
 		this.challenger = challenger;
+		this.challenger_status = "playing";
 		this.challengee = challengee;
+		this.challengee_status = "playing";
 		this.version = version;
+		this.current = challenger;
 		this.players = new int[] {challenger, challengee};
+	}
+
+	public String getChallenger_status() {
+		return challenger_status;
+	}
+
+	public void setChallenger_status(String challenger_status) {
+		this.challenger_status = challenger_status;
+	}
+
+	public String getChallengee_status() {
+		return challengee_status;
+	}
+
+	public void setChallengee_status(String challengee_status) {
+		this.challengee_status = challengee_status;
+	}
+
+	public int getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(int current) {
+		this.current = current;
 	}
 
 	public int getId() {
@@ -70,13 +103,16 @@ public class GameRDG {
 	}
 
 	public int insert() throws SQLException {
-		String sql = "INSERT INTO GAME (id, version, challenger, challengee) VALUES (?, ?, ?, ?);";
+		String sql = "INSERT INTO GAME (id, version, challenger, challengee, challenger_status, challengee_status, current) VALUES (?, ?, ?, ?, ?, ?, ?);";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1, this.id);
 		ps.setInt(2, this.version);
 		ps.setInt(3, this.challenger);
 		ps.setInt(4, this.challengee);
+		ps.setString(5, this.challenger_status);
+		ps.setString(6, this.challengee_status);
+		ps.setInt(7, this.current);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
@@ -85,14 +121,14 @@ public class GameRDG {
 
 	public int update() throws SQLException {
 		String sql = "UPDATE GAME" + 
-				"SET version = ?, challenger = ?, challengee = ?" + 
+				"SET version = ?, challenger_status = ?, challengee_status = ?" + 
 				"WHERE id = ?;";
 		Connection con = DbConnectionManager.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setInt(5, this.id);
+		ps.setInt(4, this.id);
 		ps.setInt(1, this.version + 1);
-		ps.setInt(2, this.challenger);
-		ps.setInt(3, this.challengee);
+		ps.setString(2, this.challenger_status);
+		ps.setString(3, this.challengee_status);
 		int res = ps.executeUpdate();
 		ps.close();
 		con.close();
@@ -119,7 +155,10 @@ public class GameRDG {
 			g.setId(res.getInt("id"));
 			g.setVersion(res.getInt("version"));
 			g.setChallenger(res.getInt("challenger"));
-			g.setChallenger(res.getInt("challengee"));
+			g.setChallengee(res.getInt("challengee"));
+			g.setChallengee_status(res.getString("challengee_status"));
+			g.setChallenger_status(res.getString("challenger_status"));
+			g.setCurrent(res.getInt("current"));
 			g.setPlayers(new int[] {res.getInt("challenger"), res.getInt("challengee")});
 		}
 		res.close();
@@ -139,11 +178,35 @@ public class GameRDG {
 			g.setVersion(res.getInt("version"));
 			g.setChallenger(res.getInt("challenger"));
 			g.setChallenger(res.getInt("challengee"));
+			g.setChallengee_status(res.getString("challengee_status"));
+			g.setChallenger_status(res.getString("challenger_status"));
+			g.setCurrent(res.getInt("current"));
 			g.setPlayers(new int[] {res.getInt("challenger"), res.getInt("challengee")});
 			list.add(g);
 		}
 		res.close();
 		con.close();
 		return list;
+	}
+	
+	public int updateStatus(int playerId, String status) throws SQLException {
+		String sql = "UPDATE GAME " + 
+				"SET version=?, challenger_status=?, challengee_status=? " + 
+				"WHERE id=?;";
+		Connection con = DbConnectionManager.getConnection();
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(4, this.id);
+		ps.setInt(1, this.version + 1);
+		if(playerId == this.challenger) {
+			ps.setString(2, status);
+			ps.setString(3, this.challengee_status);
+		} else {
+			ps.setString(2, this.challenger_status);
+			ps.setString(3, status);			
+		}
+		int res = ps.executeUpdate();
+		ps.close();
+		con.close();
+		return res;
 	}
 }

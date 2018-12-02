@@ -17,6 +17,10 @@ public class Board {
 	
 	private int gameId;
 	
+	private int version;
+	
+	private int current;
+	
 	private int[] players;
 	
 	private int[] decks;
@@ -25,7 +29,23 @@ public class Board {
 	
 	public Board(int gameId) {
 		this.gameId = gameId;
-		play = new HashMap();
+		play = new HashMap<String, State>();
+	}
+
+	public int getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(int current) {
+		this.current = current;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 	public int getGameId() {
@@ -60,13 +80,15 @@ public class Board {
 		this.play = play;
 	}
 	
-	public void fillBoardData(int challengeId) throws SQLException {
+	public void fillBoardData() throws SQLException {
 		ChallengeRDG ch = ChallengeRDG.find(this.gameId);
 		int challengerId = ch.getChallenger();
 		int challengeeId = ch.getChallengee();
 		this.players = new int[] {challengerId , challengeeId};
 		this.decks = new int[] {challengerId , challengeeId};
-		
+		GameRDG g = GameRDG.find(this.gameId);
+		this.version = g.getVersion();
+		this.current = g.getCurrent();
 		
 		State s1 = new State();
 		int handSize1 = this.findHandSize(challengerId);
@@ -90,14 +112,21 @@ public class Board {
 	}
 	
 	private String findPlayerStatus(int playerId) {
-		UserRDG u = null;
+		GameRDG g = null;
 		try {
-			u = UserRDG.find(playerId);
+			g = GameRDG.find(this.gameId);
+			if(g != null) {
+				if(g.getChallengee() == playerId) {
+					return g.getChallengee_status();
+				} else {
+					return g.getChallenger_status();
+				}
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return u.getStatus();
+		return null;
 	}
 	
 	private int findHandSize(int playerId) throws SQLException {

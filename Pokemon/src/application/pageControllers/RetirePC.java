@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import application.util.URIUtil;
 import data.rdg.GameRDG;
 import domain.model.Board;
 
@@ -43,14 +44,13 @@ public class RetirePC extends HttpServlet {
 		processRequest(request, response);
 	}
 	
-	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String game = req.getParameter("game");
-		int gameId = Integer.parseInt(game);
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		int gameId = URIUtil.parseForIdInBeteewn(req.getRequestURI());
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
 		if(id < 0) {
 			req.setAttribute("message", "User Not Login");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		}
 		
@@ -66,16 +66,16 @@ public class RetirePC extends HttpServlet {
 		if(!isMyGame) {
 			req.setAttribute("message", "This is not your game.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
 			try {
 				//retire from the game. The status of the player should be reset
 				GameRDG g = GameRDG.find(gameId);
-				g.delete();
+				g.updateStatus(id, "retired");
 				req.setAttribute("message", "User with id =  " + id + " has successfully retire from the game");
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
 				return;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

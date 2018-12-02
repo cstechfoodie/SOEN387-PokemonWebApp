@@ -121,6 +121,11 @@ public class FrontController extends HttpServlet {
 			dp.processRequest(req, res);
 			return;
 		}
+		else if(req.getRequestURI().contains("/Game") && req.getRequestURI().contains("/Retire") && req.getMethod().equals("POST")) {
+			RetirePC dp = new RetirePC();
+			dp.processRequest(req, res);
+			return;				
+	}
 		
 		return;
 	}
@@ -186,7 +191,10 @@ public class FrontController extends HttpServlet {
 					"  `id` INT NOT NULL,\n" + 
 					"  `version` INT,\n" + 
 					"  `challenger` INT,\n" + 
+					"  `challenger_status` VARCHAR(255),\n" +
 					"  `challengee` INT,\n" + 
+					"  `challengee_status` VARCHAR(255),\n" +
+					"  `current` INT,\n" +
 					"  PRIMARY KEY (`id`));");
 			
 		} catch (SQLException e) {
