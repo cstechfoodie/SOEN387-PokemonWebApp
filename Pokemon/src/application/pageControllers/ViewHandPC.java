@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import application.util.URIUtil;
 import data.rdg.HandCardRDG;
 import domain.model.Board;
 
@@ -43,9 +44,8 @@ public class ViewHandPC extends HttpServlet {
 		processRequest(request, response);
 	}
 	
-	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String game = req.getParameter("game");
-		int gameId = Integer.parseInt(game);
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		int gameId = URIUtil.parseForIdInBeteewn(req.getRequestURI());
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
 		if(id < 0) {
 			req.setAttribute("message", "User Not Login");
@@ -66,14 +66,14 @@ public class ViewHandPC extends HttpServlet {
 		if(!isMyGame) {
 			req.setAttribute("message", "This is not your game.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
 			try {
-				ArrayList<HandCardRDG> cards = HandCardRDG.viewHand(id);
+				ArrayList<Integer> cards = HandCardRDG.viewHandIds(id);
 				req.setAttribute("hand", cards);
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("WEB-INF/jsp/viewHand.jsp").forward(req, res);
+				req.getRequestDispatcher("/WEB-INF/jsp/viewHand.jsp").forward(req, res);
 				return;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

@@ -80,8 +80,7 @@ public class AcceptChallengePC extends HttpServlet {
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
-		}
-
+		}	
 		
 		boolean success = false;
 		//System.out.println("from accept challenge: " + deckId + "  " + version);

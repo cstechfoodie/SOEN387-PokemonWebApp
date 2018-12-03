@@ -136,6 +136,19 @@ public class HandCardRDG {
 		return list;
 	}
 	
+	public static ArrayList<Integer> viewHandIds(int id) throws SQLException{
+		ArrayList<Integer> list = new ArrayList<>();
+		String sql = "SELECT * FROM HANDCARD WHERE handId = '" + id + "' ORDER BY sequenceId ASC;";
+		Connection con = DbConnectionManager.getConnection();
+		ResultSet res = con.createStatement().executeQuery(sql);
+		while (res.next()) {
+			list.add(res.getInt("sequenceId"));
+		}
+		res.close();
+		con.close();
+		return list;
+	}
+	
 	public static HandCardRDG find(int handId, int sequenceId) throws SQLException {
 		String sql = "SELECT * FROM HANDCARD WHERE handId = '" + handId + "' AND sequenceId = '" + sequenceId + "';";
 		Connection con = DbConnectionManager.getConnection();

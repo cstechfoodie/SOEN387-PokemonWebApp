@@ -51,6 +51,15 @@ public class URIUtil {
         return false;
 	}
 	
+	public static boolean wordsInPath(String uri, String... words) {
+		for(int i = 0; i < words.length; i++) {
+			if(!uri.contains(words[i])) {
+				return false;
+			}
+		}
+        return true;
+	}
+	
 	public static String getUri(String url) {
 		String[] words = url.split("/");
         return "/" + words[words.length-1];

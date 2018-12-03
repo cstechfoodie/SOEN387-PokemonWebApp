@@ -4,6 +4,7 @@
 <json:property name="id" value="${id}"/> --%>
   <json:array name="cards" var="item" items="${cards}">
     <json:object>
+    <json:property name="id" value="${item.sequenceId}"/>
       <json:property name="t" value="${item.type}"/>
       <json:property name="n" value="${item.name}"/>
       <json:property name="b" value="${item.basic}"/>

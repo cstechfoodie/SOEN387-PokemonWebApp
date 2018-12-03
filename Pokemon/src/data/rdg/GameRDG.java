@@ -209,4 +209,24 @@ public class GameRDG {
 		con.close();
 		return res;
 	}
+	
+	//if lostupdate, return 0
+	public int updateCurrent(int playerId, String status) throws SQLException {
+		String sql = "UPDATE GAME " + 
+				"SET version=?, current=? " + 
+				"WHERE id=? AND version= " + this.version + ";";
+		Connection con = DbConnectionManager.getConnection();
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(3, this.id);
+		ps.setInt(1, this.version + 1);
+		if(current == this.challenger) {
+			ps.setInt(2, this.challengee);
+		} else {
+			ps.setInt(2, this.challenger);			
+		}
+		int res = ps.executeUpdate();
+		ps.close();
+		con.close();
+		return res;
+	}
 }

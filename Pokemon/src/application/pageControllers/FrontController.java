@@ -111,12 +111,16 @@ public class FrontController extends HttpServlet {
 			return;
 		}
 		else if(req.getRequestURI().contains("/Game") && URIUtil.parseForIdAtEnd(req.getRequestURI()) > 0 && req.getMethod().equals("GET")) {
+			if(req.getRequestURI().contains("/Hand")) {
+				ViewHandPC dp = new ViewHandPC();
+				dp.processRequest(req, res);
+				return;
+			}
 			ViewBoardPC dp = new ViewBoardPC();
 			dp.processRequest(req, res);
 			return;
 		}
 		else if(req.getRequestURI().contains("/Game") && req.getMethod().equals("GET")) {
-
 			ListGamesPC dp = new ListGamesPC();
 			dp.processRequest(req, res);
 			return;
@@ -125,7 +129,12 @@ public class FrontController extends HttpServlet {
 			RetirePC dp = new RetirePC();
 			dp.processRequest(req, res);
 			return;				
-	}
+		}
+		else if(URIUtil.wordsInPath(req.getRequestURI(), "/Game", "/Hand", "/Play") && req.getMethod().equals("POST")) {
+			PlayPokemonToBenchPC dp = new PlayPokemonToBenchPC();
+			dp.processRequest(req, res);
+			return;				
+		}
 		
 		return;
 	}

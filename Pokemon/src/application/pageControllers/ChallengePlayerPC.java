@@ -91,6 +91,16 @@ public class ChallengePlayerPC extends HttpServlet {
 			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
+			try {
+				if(ChallengeRDG.challengeTwice(id, playerId)) {
+					req.setAttribute("message", "Challenge the same player twice not okay");
+					req.setAttribute("status", "fail");
+					req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+					return;
+				}
+			} catch (SQLException e1) {
+				System.out.println("Exception in challenging the same player twice");
+			}
 			ChallengeRDG ch = new ChallengeRDG(id, playerId, 0, deckId);
 			try {
 				ch.insert();

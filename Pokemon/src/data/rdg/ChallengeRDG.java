@@ -194,4 +194,17 @@ public class ChallengeRDG {
 		
 		return false;
 	}
+	
+	public static boolean challengeTwice(int challenger, int challengee) throws SQLException {
+		String sql = "SELECT * FROM CHALLENGE WHERE challenger =" + challenger + " AND challengee=" + challengee +" AND status=0;";
+		Connection con = DbConnectionManager.getConnection();
+		ResultSet res = con.createStatement().executeQuery(sql);
+		boolean isTwice = false;
+		if(res.next()) {
+			isTwice = true;			
+		}
+		res.close();
+		con.close();
+		return isTwice;
+	}
 }
