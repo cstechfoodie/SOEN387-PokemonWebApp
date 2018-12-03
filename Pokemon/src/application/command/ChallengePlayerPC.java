@@ -1,4 +1,4 @@
-package application.pageControllers;
+package application.command;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -13,21 +13,20 @@ import javax.servlet.http.HttpServletResponse;
 import application.util.URIUtil;
 import data.rdg.ChallengeRDG;
 import data.rdg.DeckCardRDG;
-import data.rdg.GameRDG;
 import data.rdg.UserRDG;
 import domain.model.Deck;
 
 /**
- * Servlet implementation class AcceptChallengePC
+ * Servlet implementation class ChallengePlayerPC
  */
-@WebServlet("/AcceptChallenge")
-public class AcceptChallengePC extends HttpServlet {
+@WebServlet("/ChallengePlayer")
+public class ChallengePlayerPC extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AcceptChallengePC() {
+    public ChallengePlayerPC() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -49,83 +48,77 @@ public class AcceptChallengePC extends HttpServlet {
 	}
 	
 	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		//String challenge = req.getParameter("challenge");
-		int challengeId = URIUtil.parseForIdInBeteewn(req.getRequestURI());
 		int deckId = Integer.parseInt(req.getParameter("deck"));
-		int version = Integer.parseInt(req.getParameter("version"));
-		ChallengeRDG ch = null;
-		try {
-			ch = ChallengeRDG.find(challengeId);
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		int playerId = URIUtil.findInteger(req.getRequestURI());
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
-		
 		if(id < 0) {
 			req.setAttribute("message", "User Not Login");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		}
-		if(ch.getChallengee() != id) {
-			req.setAttribute("message", "Can't accept others' challenge.");
+		if(playerId < 0) {
+			req.setAttribute("message", "Challenge player with illegal id.");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		}
+		if(playerId == id) {
+			req.setAttribute("message", "Can't challenge yourself.");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		}
+		if(Deck.isMyOwnDeck(playerId, deckId)) {
+			req.setAttribute("message", "Can't chanllenge with someone else's deck.");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		}
+		ArrayList<DeckCardRDG> cards = Deck.viewDeck(deckId);
+		if(cards.size() == 0) {
+			req.setAttribute("message", "No deck uploaded");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		}
 		
-		if(ch.getChallenger() == id) {
-			req.setAttribute("message", "Can't accept own challenge.");
+		UserRDG u = null;
+		try {
+			u = UserRDG.find(playerId);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		if (u == null) {
+			req.setAttribute("message", "Invalid challengee id");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
-		}	
-		
-		boolean success = false;
-		//System.out.println("from accept challenge: " + deckId + "  " + version);
-		if(Deck.isMyOwnDeck(ch.getChallengee(), deckId) && version == ch.getVersion()) {
-			success = ChallengeRDG.updateStatus(challengeId, version, 3);				
 		} else {
-			req.setAttribute("message", "Challanger deckId or version doesn't match");
-			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
-			return;
-		}
-		
-		if(success) {
-			GameRDG g = new GameRDG(ch.getId(), ch.getChallenger(), ch.getChallengee(), 1);
-			//should update player's status if more tests added
-//			try {
-//				UserRDG player1 = UserRDG.find(ch.getChallenger());
-//				UserRDG player2 = UserRDG.find(ch.getChallengee());
-//				player1.setStatus("playing");
-//				player2.setStatus("playing");
-//				player1.update();
-//				player2.update();
-//			} catch (SQLException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
 			try {
-				g.insert();
+				if(ChallengeRDG.challengeTwice(id, playerId)) {
+					req.setAttribute("message", "Challenge the same player twice not okay");
+					req.setAttribute("status", "fail");
+					req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+					return;
+				}
+			} catch (SQLException e1) {
+				System.out.println("Exception in challenging the same player twice");
+			}
+			ChallengeRDG ch = new ChallengeRDG(id, playerId, 0, deckId);
+			try {
+				ch.insert();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			req.setAttribute("message", "User with id =  " + ch.getChallengee() + " has successfully accept challenge.");
+			req.setAttribute("message", "Challenge with id =  " + ch.getId() + " has been successfully created.");
 			req.setAttribute("status", "success");
 			req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
 			return;
 		}
-		else {
-			//lost update situation
-			req.setAttribute("message", "Suspected lost update");
-			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
-			return;
-		}
-	
 	}
 
 }

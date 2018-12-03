@@ -1,4 +1,4 @@
-package application.pageControllers;
+package application.command;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -79,12 +79,12 @@ public class FrontController extends HttpServlet {
 			return;
 		}
 		
-		else if(req.getRequestURI().contains("/Player") && req.getMethod().equals("GET")) {
+		else if(req.getRequestURI().contains("Poke/Player") && req.getMethod().equals("GET")) {
 			ListPlayersPC dp = new ListPlayersPC();
 			dp.processRequest(req, res);
 			return;
 		}
-		else if(req.getRequestURI().contains("/Player") && req.getRequestURI().contains("/Challenge") && req.getMethod().equals("POST")) {
+		else if(req.getRequestURI().contains("Poke/Player") && req.getRequestURI().contains("/Challenge") && req.getMethod().equals("POST")) {
 				ChallengePlayerPC dp = new ChallengePlayerPC();
 				dp.processRequest(req, res);
 				return;				
@@ -113,6 +113,11 @@ public class FrontController extends HttpServlet {
 		else if(req.getRequestURI().contains("/Game") && URIUtil.parseForIdAtEnd(req.getRequestURI()) > 0 && req.getMethod().equals("GET")) {
 			if(req.getRequestURI().contains("/Hand")) {
 				ViewHandPC dp = new ViewHandPC();
+				dp.processRequest(req, res);
+				return;
+			}
+			if(req.getRequestURI().contains("/Discard")) {
+				ViewDiscard dp = new ViewDiscard();
 				dp.processRequest(req, res);
 				return;
 			}
@@ -194,6 +199,7 @@ public class FrontController extends HttpServlet {
 					"  `challengee` INT,\n" + 
 					"  `status` INT,\n" + 
 					"  `deck` INT,\n" + 
+					"  `deck_ee` INT,\n" + 
 					"  PRIMARY KEY (`id`));");
 			
 			con.createStatement().executeUpdate("CREATE TABLE GAME (\n" + 

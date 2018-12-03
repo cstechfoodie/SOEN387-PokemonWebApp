@@ -1,9 +1,7 @@
-package application.pageControllers;
+package application.command;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,19 +9,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import data.rdg.UserRDG;
+import application.util.URIUtil;
+import data.rdg.GameRDG;
+import domain.model.Board;
 
 /**
- * Servlet implementation class ListPlayersPC
+ * Servlet implementation class RetirePC
  */
-@WebServlet("/ListPlayers")
-public class ListPlayersPC extends HttpServlet {
+@WebServlet("/Retire")
+public class RetirePC extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ListPlayersPC() {
+    public RetirePC() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,7 +32,8 @@ public class ListPlayersPC extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		processRequest(request, response);
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -40,33 +41,48 @@ public class ListPlayersPC extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		processRequest(request, response);
 	}
-
 	
 	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		int gameId = URIUtil.parseForIdInBeteewn(req.getRequestURI());
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
-		ArrayList<UserRDG> u = null;
+		if(id < 0) {
+			req.setAttribute("message", "User Not Login");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		}
+		
+		Board board = new Board(gameId);
+		boolean isMyGame = false;
 		try {
-			u = (ArrayList<UserRDG>) UserRDG.findAll();
+			isMyGame = board.isMyGame(id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(id < 0) {
-			req.setAttribute("message", "You have not successfully logged in.");
+		
+		if(!isMyGame) {
+			req.setAttribute("message", "This is not your game.");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
 		} else {
-			if (u.size() == 0) {
-				req.setAttribute("message", "No players exist.");
-				req.setAttribute("status", "fail");
-				req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
-			} else {
-				req.setAttribute("players", u);
+			try {
+				//retire from the game. The status of the player should be reset
+				GameRDG g = GameRDG.find(gameId);
+				g.updateStatus(id, "retired");
+				req.setAttribute("message", "User with id =  " + id + " has successfully retire from the game");
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("/WEB-INF/jsp/listPlayers.jsp").forward(req, res);
-			}	
+				req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
+				return;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+
 	}
+
 }

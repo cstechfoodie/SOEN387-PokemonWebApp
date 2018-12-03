@@ -85,7 +85,7 @@ public class Board {
 		int challengerId = ch.getChallenger();
 		int challengeeId = ch.getChallengee();
 		this.players = new int[] {challengerId , challengeeId};
-		this.decks = new int[] {challengerId , challengeeId};
+		this.decks = new int[] {ch.getDeck() , ch.getDeck_ee()};
 		GameRDG g = GameRDG.find(this.gameId);
 		this.version = g.getVersion();
 		this.current = g.getCurrent();

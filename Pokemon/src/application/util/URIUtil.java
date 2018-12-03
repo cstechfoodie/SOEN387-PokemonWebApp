@@ -60,6 +60,21 @@ public class URIUtil {
         return true;
 	}
 	
+	public static int findInteger(String uri) {
+		String[] words = uri.split("/");
+		for(int i = 0; i < words.length; i++) {
+			try {
+				int res = Integer.parseInt(words[i]);
+				return res;
+			}
+			catch (Exception e) {
+				continue;
+			}
+		}
+		
+		return 0;
+	}
+	
 	public static String getUri(String url) {
 		String[] words = url.split("/");
         return "/" + words[words.length-1];

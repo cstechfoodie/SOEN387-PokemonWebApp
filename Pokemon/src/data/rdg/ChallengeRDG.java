@@ -23,6 +23,8 @@ public class ChallengeRDG {
 	
 	private int deck;
 	
+	private int deck_ee;
+	
 	public int getDeck() {
 		return deck;
 	}
@@ -44,6 +46,14 @@ public class ChallengeRDG {
 		this.challenger = challenger;
 		this.status = status;
 		this.deck = deck;
+	}
+
+	public int getDeck_ee() {
+		return deck_ee;
+	}
+
+	public void setDeck_ee(int deck_ee) {
+		this.deck_ee = deck_ee;
 	}
 
 	public int getId() {
@@ -143,6 +153,7 @@ public class ChallengeRDG {
 			ch.setChallengee(res.getInt("challengee"));
 			ch.setStatus(res.getInt("status"));
 			ch.setDeck(res.getInt("deck"));
+			ch.setDeck_ee(res.getInt("deck_ee"));
 		}
 		res.close();
 		con.close();
@@ -163,6 +174,7 @@ public class ChallengeRDG {
 			ch.setChallengee(res.getInt("challengee"));
 			ch.setStatus(res.getInt("status"));
 			ch.setDeck(res.getInt("deck"));
+			ch.setDeck_ee(res.getInt("deck_ee"));
 			list.add(ch);
 		}
 		res.close();
@@ -206,5 +218,19 @@ public class ChallengeRDG {
 		res.close();
 		con.close();
 		return isTwice;
+	}
+	
+	public int updateDeck_ee(int deckId) throws SQLException {
+		String sql = "UPDATE CHALLENGE " + 
+				"SET deck_ee=? " + 
+				"WHERE id = ?;";
+		Connection con = DbConnectionManager.getConnection();
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(2, this.id);
+		ps.setInt(1, deckId);
+		int res = ps.executeUpdate();
+		ps.close();
+		con.close();
+		return res;
 	}
 }

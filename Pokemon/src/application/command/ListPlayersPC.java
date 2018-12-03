@@ -1,8 +1,9 @@
-package application.pageControllers;
+package application.command;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,21 +11,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import application.util.URIUtil;
-import data.rdg.HandCardRDG;
-import domain.model.Board;
+import data.rdg.UserRDG;
 
 /**
- * Servlet implementation class ViewHandPC
+ * Servlet implementation class ListPlayersPC
  */
-@WebServlet("/ViewHand")
-public class ViewHandPC extends HttpServlet {
+@WebServlet("/ListPlayers")
+public class ListPlayersPC extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ViewHandPC() {
+    public ListPlayersPC() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -41,45 +40,33 @@ public class ViewHandPC extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		processRequest(request, response);
+		doGet(request, response);
 	}
+
 	
 	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		int gameId = URIUtil.parseForIdInBeteewn(req.getRequestURI());
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
-		if(id < 0) {
-			req.setAttribute("message", "User Not Login");
-			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
-			return;
-		}
-		
-		Board board = new Board(gameId);
-		boolean isMyGame = false;
+		ArrayList<UserRDG> u = null;
 		try {
-			isMyGame = board.isMyGame(id);
+			u = (ArrayList<UserRDG>) UserRDG.findAll();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if(!isMyGame) {
-			req.setAttribute("message", "This is not your game.");
+		if(id < 0) {
+			req.setAttribute("message", "You have not successfully logged in.");
 			req.setAttribute("status", "fail");
 			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
-			return;
 		} else {
-			try {
-				ArrayList<Integer> cards = HandCardRDG.viewHandIds(id);
-				req.setAttribute("hand", cards);
+			if (u.size() == 0) {
+				req.setAttribute("message", "No players exist.");
+				req.setAttribute("status", "fail");
+				req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			} else {
+				req.setAttribute("players", u);
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("/WEB-INF/jsp/viewHand.jsp").forward(req, res);
-				return;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				req.getRequestDispatcher("/WEB-INF/jsp/listPlayers.jsp").forward(req, res);
+			}	
 		}
 	}
-
 }

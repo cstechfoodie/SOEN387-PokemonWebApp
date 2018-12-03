@@ -1,4 +1,4 @@
-package application.pageControllers;
+package application.command;
 
 import java.io.IOException;
 import java.sql.SQLException;

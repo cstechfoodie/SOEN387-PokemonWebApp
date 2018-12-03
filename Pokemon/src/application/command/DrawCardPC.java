@@ -1,8 +1,7 @@
-package application.pageControllers;
+package application.command;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,21 +9,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import data.rdg.ChallengeRDG;
 import data.rdg.GameRDG;
-import data.rdg.UserRDG;
 import domain.model.Board;
 
 /**
- * Servlet implementation class ListGames
+ * Servlet implementation class DrawCardPC
  */
-@WebServlet(name = "ListGamesPC", urlPatterns = { "/ListGames" })
-public class ListGamesPC extends HttpServlet {
+@WebServlet("/DrawCard")
+public class DrawCardPC extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ListGamesPC() {
+    public DrawCardPC() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,7 +33,7 @@ public class ListGamesPC extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		processRequest(request, response);
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -42,28 +41,47 @@ public class ListGamesPC extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		processRequest(request, response);
 	}
 	
-	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		String game = req.getParameter("game");
+		int gameId = Integer.parseInt(game);
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
-		ArrayList<GameRDG> games = null;
+		if(id < 0) {
+			req.setAttribute("message", "User Not Login");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		}
+		
+		Board board = new Board(gameId);
+		boolean isMyGame = false;
 		try {
-			games = (ArrayList<GameRDG>) GameRDG.findAll();
+			isMyGame = board.isMyGame(id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(id < 0) {
-			req.setAttribute("message", "You have not successfully logged in.");
+		
+		if(!isMyGame) {
+			req.setAttribute("message", "This is not your game.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
-				req.setAttribute("games", games);
+			try {
+				board.drawCard(id);
+				req.setAttribute("message", "User with id =  " + id + " has successfully drew one card");
 				req.setAttribute("status", "success");
-				req.getRequestDispatcher("/WEB-INF/jsp/listGames.jsp").forward(req, res);
+				req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
 				return;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+
 	}
+
 }

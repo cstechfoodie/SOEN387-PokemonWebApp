@@ -1,4 +1,4 @@
-package application.pageControllers;
+package application.command;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -9,21 +9,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import data.rdg.ChallengeRDG;
-import data.rdg.GameRDG;
+import application.util.URIUtil;
 import domain.model.Board;
 
 /**
- * Servlet implementation class DrawCardPC
+ * Servlet implementation class PlayPokemonToBenchPC
  */
-@WebServlet("/DrawCard")
-public class DrawCardPC extends HttpServlet {
+@WebServlet("/PlayPokemonToBench")
+public class PlayPokemonToBenchPC extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public DrawCardPC() {
+    public PlayPokemonToBenchPC() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -44,14 +43,15 @@ public class DrawCardPC extends HttpServlet {
 		processRequest(request, response);
 	}
 	
-	private void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String game = req.getParameter("game");
-		int gameId = Integer.parseInt(game);
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		int gameId = URIUtil.parseForIdInBeteewn(req.getRequestURI());
+		int cardId =  URIUtil.parseForIdAtEnd(req.getRequestURI());
+		int gameversion = Integer.parseInt(req.getParameter("version"));
 		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
 		if(id < 0) {
 			req.setAttribute("message", "User Not Login");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		}
 		
@@ -67,15 +67,23 @@ public class DrawCardPC extends HttpServlet {
 		if(!isMyGame) {
 			req.setAttribute("message", "This is not your game.");
 			req.setAttribute("status", "fail");
-			req.getRequestDispatcher("WEB-INF/jsp/failure.jsp").forward(req, res);
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
 			return;
 		} else {
 			try {
-				board.drawCard(id);
-				req.setAttribute("message", "User with id =  " + id + " has successfully drew one card");
-				req.setAttribute("status", "success");
-				req.getRequestDispatcher("WEB-INF/jsp/success.jsp").forward(req, res);
-				return;
+				boolean success = board.playCardToBench(id, cardId);
+				if(success) {
+					req.setAttribute("message", "User with id =  " + id + " has successfully played a card.");
+					req.setAttribute("status", "success");
+					req.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(req, res);
+					return;
+				}
+				else {
+					req.setAttribute("message", "This card is not in hand.");
+					req.setAttribute("status", "fail");
+					req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+					return;
+				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

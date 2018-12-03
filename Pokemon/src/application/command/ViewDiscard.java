@@ -1,0 +1,71 @@
+package application.command;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import application.util.URIUtil;
+import data.rdg.HandCardRDG;
+import domain.model.Board;
+
+public class ViewDiscard {
+	
+	public ViewDiscard() {};
+	
+	public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		int gameId = URIUtil.parseForIdInBeteewn(req.getRequestURI());
+		int playerId = URIUtil.parseForIdAtEnd(req.getRequestURI());
+		int id = req.getSession(true).getAttribute("userid") == null ? -1 : (int)req.getSession(true).getAttribute("userid");
+		if(id < 0) {
+			req.setAttribute("message", "User Not Login");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		}
+		
+		Board board = new Board(gameId);
+		boolean isMyGame = false;
+		try {
+			isMyGame = board.isMyGame(id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(!isMyGame) {
+			req.setAttribute("message", "This is not your game.");
+			req.setAttribute("status", "fail");
+			req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+			return;
+		} else {
+			boolean isOtherGame = false;
+			try {
+				isOtherGame = board.isMyGame(playerId);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(!isOtherGame) {
+				req.setAttribute("message", "Player " + playerId + " is not playing.");
+				req.setAttribute("status", "fail");
+				req.getRequestDispatcher("/WEB-INF/jsp/failure.jsp").forward(req, res);
+				return;
+			} else {
+				try {
+					ArrayList<Integer> cards = HandCardRDG.viewHandIds(id);
+					req.setAttribute("hand", cards);
+					req.setAttribute("status", "success");
+					req.getRequestDispatcher("/WEB-INF/jsp/viewHand.jsp").forward(req, res);
+					return;
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+}
